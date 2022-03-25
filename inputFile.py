@@ -1,5 +1,5 @@
-stocks = {}
 from datetime import datetime
+stocks = {}
 
 class Stock:
     def __init__(self, date, ticket, name, open_price, max_price, min_price, avg_price, close_price, qty_exchange, qty_stocks, total_value):

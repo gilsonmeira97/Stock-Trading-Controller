@@ -11,3 +11,5 @@ with open('data_extracted.csv', mode='w', newline='') as file:
     writer.writerow(["Data", "Papel", "Fechamento"])
     for data in datas:
         writer.writerow([data['date'], data['ticket'], data['close_price']])
+
+print("Extracted!")

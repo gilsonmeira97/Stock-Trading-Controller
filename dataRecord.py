@@ -1,8 +1,6 @@
 from pymongo import MongoClient
 from inputFile import *
-
-client = MongoClient(port=27017)
-db = client.stocks
+from dbConnection import db
 
 for ticket, stock in stocks.items():
    # List of data that will be persisted in the database
