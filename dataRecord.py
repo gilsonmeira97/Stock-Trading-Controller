@@ -2,12 +2,12 @@ from pymongo import MongoClient
 from inputFile import *
 
 client = MongoClient(port=27017)
-db=client.stocks
+db = client.stocks
 
 for ticket, stock in stocks.items():
    # List of data that will be persisted in the database
    selected = ["PETR3", "BBDC3", "PETR4", "ITSA4", "ITSA3", "CMIG3", "ITUB3"] 
-   
+
    if ticket in selected: 
       last_dates = []
       for item in db[ticket].find({}, {'date': 1, '_id': 0}):

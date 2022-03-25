@@ -1,3 +1,5 @@
 COTAHIST_*.txt
 __pycache__
 venv
+teste.py
+data_extracted.csv
