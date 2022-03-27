@@ -26,7 +26,7 @@ def formatToDate(date):
     day = int(date[6:8])
     return datetime(year, month, day)
 
-with open('COTAHIST_A2021.txt') as document:
+with open('COTAHIST_A2022.txt') as document:
     lines = document.readlines()
     for line in lines:
         id = line[0:2]
