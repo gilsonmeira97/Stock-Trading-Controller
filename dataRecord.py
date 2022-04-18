@@ -1,17 +1,21 @@
 from pymongo import MongoClient
-from inputFile import *
+from mt5GetRates import *
 from dbConnection import db
+from Share import *
 
-selected = ["PETR3", "BBDC3", "PETR4", "ITSA4", "ITSA3", "CMIG3", "ITUB3"] 
-for ticket, stock in stocks.items():
    # List of data that will be persisted in the database
+   
 
-   if ticket in selected: 
-      last_dates = []
-      for item in db[ticket].find({}, {'date': 1, '_id': 0}):
-         last_dates.append(item['date'])
-      for obj in stock:
-         if obj.date not in last_dates:
-            db[ticket].insert_one(vars(obj))
-
+#      for item in db[ticket].find({}, {'date': 1, '_id': 0}):
+#         last_dates.append(item['date'])
+#      for obj in stock:
+#         if obj.date not in last_dates:
+#            db[ticket].insert_one(vars(obj))
+def registerData(share, symbol):
+   newShare = Share(
+      share['time'], symbol, share["open"], 
+      share["high"], share["low"], share["close"], 
+      share["tick_volume"], share["real_volume"]
+      )
+   
 print("All Done!")
