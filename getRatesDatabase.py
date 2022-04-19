@@ -1,6 +1,5 @@
 from dbConnection import db
 from datetime import datetime
-from inputSymbols import GetSymbols
 
 #ticket = 'AZUL4'
 #fist_date = datetime(2021,4,13)

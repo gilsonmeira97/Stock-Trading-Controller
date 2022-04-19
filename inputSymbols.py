@@ -2,7 +2,7 @@ import re
 
 regex = re.compile(r'([A-Z]{4})(\d{1,2}\b)')
 
-def GetSymbols():
+def getSymbols():
     #Lista com nome das ações
     symbols_shares = []
     with open('COTAHIST_D14042022.txt') as document:
