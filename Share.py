@@ -1,8 +1,8 @@
 from datetime import datetime
 
 class Share:
-    def __init__(self, time, open, high, low, close, tick_volume, real_volume):
-        self.time = datetime.utcfromtimestamp(time)
+    def __init__(self, date, open, high, low, close, tick_volume, real_volume):
+        self.date = datetime.utcfromtimestamp(date)
         self.open = float(open)
         self.high = float(high)
         self.low = float(low)
