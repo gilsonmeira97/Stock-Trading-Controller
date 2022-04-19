@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 from mt5Connection import mt5
-from inputSymbols import GetSymbols
+from inputSymbols import getSymbols
 from dataInsert import insertData
 
-symbols_shares = GetSymbols()
+symbols_shares = getSymbols()
 yesterday_date = datetime.today() - timedelta(days=1)
 date_start = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)
 file = open("geraramErro.txt", "w")
