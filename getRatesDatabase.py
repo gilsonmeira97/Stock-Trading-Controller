@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from datetime import datetime
 
 ticket = 'PETR3'
-first_date = datetime(2022,4,18)
+first_date = datetime(2022,4,14)
 last_date = datetime(2022,4,18,23,59)
 start_interval = datetime(1,1,1,10,10)
 end_interval = datetime(1,1,1,16,20)
@@ -121,7 +121,68 @@ def getTwoRates(ticket, first_date, last_date, start_interval, end_interval):
         ])
         return datas
 
-dat = getTwoRates(ticket, first_date,last_date,start_interval,end_interval)
+def getDayRate(ticket, first_date, last_date):
+    with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
+        db = client.stocks
+        datas = db[ticket].aggregate([
+            {
+                "$match": {
+                    "time": {
+                        '$gte': first_date,
+                        '$lte': last_date
+                    }
+                }
+            },
+            {
+                "$sort": {
+                "time": 1
+            }
+            },
+            {
+                '$project': {
+                    
+                    'date': {
+                        "$dateToString": {
+                        "date": '$time',
+                        "format": '%Y-%m-%d'
+                        }
+                    },
+                    "time": "$time",
+                    "tick": {
+                        "time": '$time',
+                        "open": '$open',
+                        "close": '$close',
+                        "high": '$high',
+                        "low": '$low',
+                        "tick_volume": '$tick_volume',
+                        "real_volume": '$real_volume'
+                    }
+                }
+            },
+            {
+            "$group": {
+                "_id": "$date",
+                "open":{
+                    "$first": "$tick.open"
+                },
+                "close": {
+                    "$last": "$tick.close"
+                },
+                "high": {
+                    "$max": "$tick.high"
+                },
+                "low": {
+                    "$min": "$tick.low"
+                },
+                "day_volume": {
+                    "$sum": "$tick.real_volume"
+                }
+            }
+            }
+        ])
+        return datas
+
+dat = getDayRate(ticket, first_date,last_date)
 
 for d in dat:
     print(d)
