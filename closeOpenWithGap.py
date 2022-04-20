@@ -1,17 +1,24 @@
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
+import time
+
+inicio = time.time()
 
 symbols = getSymbols()
 f_MaxLoss = -0.04
-
+f_MinVolume = 100000
+f_MinOcurrences = 15
 
 with open('data_extracted.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
     
     for i, symbol in enumerate(symbols):
-        datas = getDayRate(symbol,FirstDate(2021,4,18), LastDate(2022,4,20))
+        data_result = getDayRate(symbol,FirstDate(2021,4,18), LastDate(2022,4,20), f_MinVolume)
+        if len(data_result) <= 0: continue
+        data_result = data_result[0]
+        datas = data_result['ticks']
         qty_datas = 0
         last_object = None
         ocurrences = 0
@@ -20,18 +27,13 @@ with open('data_extracted.csv', mode='w', newline='') as file:
         erros = 0
         acertos = 0
         percentual_acertos = 0
-        avg_volume = 0
-        min_volume = 100**6
         maximum_loss = 0
         maximum_gain = 0
         for data in datas:
             qty_datas += 1
-            volume = data['day_volume']
             open = data['open']
             close = data['close']
             high = data['high']
-            min_volume = volume if volume < min_volume else min_volume
-            avg_volume += volume
 
             if (last_object == None) and (close < open):
                 last_object = data
@@ -54,12 +56,12 @@ with open('data_extracted.csv', mode='w', newline='') as file:
             elif (last_object != None):
                 last_object = None
 
-        if (qty_datas > 0) and (ocurrences > 0):
-            avg_volume = avg_volume / qty_datas
+        if (ocurrences > 0):
             avg_gain = total_gain / ocurrences
             percentual_acertos = acertos / ocurrences
         
-        if (ocurrences >= 15) and ((percentual_acertos > 0.65 and avg_gain > 0.003) or (percentual_acertos <= 0.25 and avg_gain < -0.003)) and min_volume >= 100000:
-            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, min_volume, avg_volume])
-        print('Concluído: %.2f%' % ((i+1) / len(symbols)))
+        if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.003) or (percentual_acertos <= 0.25 and avg_gain < -0.003)):
+            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
+        print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 print("Ready!")
+print("Duração: ", time.time() - inicio)

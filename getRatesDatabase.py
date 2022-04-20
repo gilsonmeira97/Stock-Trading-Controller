@@ -129,7 +129,7 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
     return datas
 
 # Retorna as informações diarias (OHCL)
-def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, order = 1):
+def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
     client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
     db = client.stocks
     datas = db[ticket].aggregate([
@@ -157,40 +157,57 @@ def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, order = 1):
                 },
                 "time": "$time",
                 "tick": {
-                    "time": '$time',
                     "open": '$open',
                     "close": '$close',
                     "high": '$high',
                     "low": '$low',
-                    "tick_volume": '$tick_volume',
                     "real_volume": '$real_volume'
                 }
             }
         },
         {
-        "$group": {
-            "_id": "$date",
-            "open":{
-                "$first": "$tick.open"
-            },
-            "close": {
-                "$last": "$tick.close"
-            },
-            "high": {
-                "$max": "$tick.high"
-            },
-            "low": {
-                "$min": "$tick.low"
-            },
-            "day_volume": {
-                "$sum": "$tick.real_volume"
+            "$group": {
+                "_id": "$date",
+                "open":{
+                    "$first": "$tick.open"
+                },
+                "close": {
+                    "$last": "$tick.close"
+                },
+                "high": {
+                    "$max": "$tick.high"
+                },
+                "low": {
+                    "$min": "$tick.low"
+                },
+                "day_volume": {
+                    "$sum": "$tick.real_volume"
+                }
             }
-        }
         },
         {
             "$sort": {
             "_id": order
             }
+        },
+        {
+            "$group": {
+                "_id": 'null',
+                "min_volume": {
+                    "$min": "$day_volume"
+                },
+                "avg_volume": {
+                    "$avg": "$day_volume"
+                },
+                "ticks": {
+                    "$push": '$$ROOT'
+                }
+            }
+        },
+        {
+            "$match": {
+                '$expr': { "$gte": ["$min_volume", minVolume] }
+            }
         }
     ])
-    return datas
+    return list(datas)
