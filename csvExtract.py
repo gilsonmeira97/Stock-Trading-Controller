@@ -11,5 +11,6 @@ with open('data_extracted.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     
     writer.writerow(["Data", "Papel", "Fechamento"])
-    writer.writerow([33, 22, 3])
+    for data in datas:
+        writer.writerow([data['date'].date(), data['ticket'], data['close_price']])
 print("Extracted!")
