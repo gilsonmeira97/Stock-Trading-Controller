@@ -2,13 +2,21 @@ from pymongo import MongoClient
 from datetime import datetime
 
 ticket = 'PETR3'
-first_date = datetime(2022,4,14)
-last_date = datetime(2022,4,18,23,59)
-start_interval = datetime(1,1,1,10,10)
-end_interval = datetime(1,1,1,16,20)
+def FirstDate(year: int, month: int, day: int):
+    first_date = datetime(year, month, day)
+    return first_date
+
+def LastDate(year: int, month: int, day: int):
+    last_date = datetime(year, month, day, 23, 59)
+    return last_date
+
+def DateTime(hour: int, minute: int):
+    time = datetime(1, 1, 1, hour, minute)
+    return time
+
 
 # Retorna as cotações de um intervalo de dia e horas
-def getRatesInterval(ticket, first_date, last_date, start_interval, end_interval):
+def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime):
     with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
         db = client.stocks
         datas = db[ticket].aggregate([
@@ -65,7 +73,7 @@ def getRatesInterval(ticket, first_date, last_date, start_interval, end_interval
         return datas
 
 # Retorna duas cotações por dia
-def getTwoRates(ticket, first_date, last_date, start_interval, end_interval):
+def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime):
     with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
         db = client.stocks
         datas = db[ticket].aggregate([
@@ -121,7 +129,7 @@ def getTwoRates(ticket, first_date, last_date, start_interval, end_interval):
         ])
         return datas
 
-def getDayRate(ticket, first_date, last_date):
+def getDayRate(ticket, first_date: FirstDate, last_date: LastDate):
     with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
         db = client.stocks
         datas = db[ticket].aggregate([
@@ -178,11 +186,15 @@ def getDayRate(ticket, first_date, last_date):
                     "$sum": "$tick.real_volume"
                 }
             }
+            },
+            {
+                "$sort": {
+                "_id": -1
+                }
             }
         ])
         return datas
 
-dat = getDayRate(ticket, first_date,last_date)
-
+dat = getTwoRates(ticket, FirstDate(2022,4,13), LastDate(2022,4,20),DateTime(15,00), DateTime(15,45))
 for d in dat:
     print(d)
