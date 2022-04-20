@@ -7,7 +7,7 @@ from Share import Share
 symbols_shares = getSymbols()
 yesterday_date = datetime.today() - timedelta(days=1)
 date_start = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
-file = open("geraramErro.txt", "w")
+file = open("logErrosCreate.txt", "w")
 
 for symbol in symbols_shares:
     rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, date_start, 500000)

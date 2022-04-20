@@ -14,7 +14,7 @@ client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
 db = client.stocks
 last_day_BD = db[reference].find_one({},{'time': 1, '_id': 0}, sort=[('time', DESCENDING)])
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
-file = open("geraramErro.txt", "w")
+file = open("logErrosUpdate.txt", "w")
 
 def updateDB():
     if (last_day_BD is []) or (last_day_MT5 is None): return
@@ -53,7 +53,7 @@ def updateDB():
     for group_rates in temporary_symbols.values():
         insertDatas(group_rates, symbol)
     
-file.close()
 
 updateDB()
+file.close()
 print("Updated!")
