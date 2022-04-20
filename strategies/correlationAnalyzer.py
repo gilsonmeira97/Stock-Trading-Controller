@@ -12,10 +12,10 @@ def percentageCalculate(datas):
     return percent_list
 
 def analyze_pairs(pairOne, pairTwo, qty):
-    with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
-        db = client.stocks
-        pairOneDatas = db[pairOne].find({}, {'close_price': 1, '_id': 0}).sort('date', -1).limit(qty)
-        pairTwoDatas = db[pairTwo].find({}, {'close_price': 1, '_id': 0}).sort('date', -1).limit(qty)
+    client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
+    db = client.stocks
+    pairOneDatas = db[pairOne].find({}, {'close_price': 1, '_id': 0}).sort('date', -1).limit(qty)
+    pairTwoDatas = db[pairTwo].find({}, {'close_price': 1, '_id': 0}).sort('date', -1).limit(qty)
     pairOneDatas = percentageCalculate(pairOneDatas)
     pairTwoDatas = percentageCalculate(pairTwoDatas)
     correlation = np.corrcoef(pairOneDatas,pairTwoDatas)[0,1]
