@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 from mt5Connection import mt5
 from inputSymbols import getSymbols
 from dataInsert import insertDatas
@@ -7,7 +6,7 @@ from Share import Share
 
 symbols_shares = getSymbols()
 yesterday_date = datetime.today() - timedelta(days=1)
-date_start = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)
+date_start = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
 file = open("geraramErro.txt", "w")
 
 for symbol in symbols_shares:

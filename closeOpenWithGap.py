@@ -1,12 +1,9 @@
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
-import time
-
-inicio = time.time()
 
 symbols = getSymbols()
-f_MaxLoss = -0.04
+f_MaxLoss = -0.01
 f_MinVolume = 100000
 f_MinOcurrences = 15
 
@@ -64,4 +61,3 @@ with open('data_extracted.csv', mode='w', newline='') as file:
             writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 print("Ready!")
-print("Duração: ", time.time() - inicio)
