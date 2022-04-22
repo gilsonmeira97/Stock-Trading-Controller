@@ -4,7 +4,7 @@ regex = re.compile(r'([A-Z]{4})(\d{1,2}\b)')
 
 def getSymbols():
     #Lista com nome das ações
-    symbols_shares = []
+    symbols_shares = {}
     with open('COTAHIST_D14042022.txt') as document:
         lines = document.readlines()
         for line in lines:
@@ -14,7 +14,7 @@ def getSymbols():
                 
                 #Adiciona somente as ações que batem com a regex
                 if re.match(regex,ticket) != None and ticket not in symbols_shares:
-                    symbols_shares.append(ticket) 
+                    symbols_shares[ticket] = ticket
     pass
-    symbols_shares.append('WIN')
+    symbols_shares['WIN'] = 'WIN$'
     return symbols_shares

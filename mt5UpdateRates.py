@@ -22,11 +22,11 @@ if (last_day_MT5 is None):
 
 date_MT5 = datetime.utcfromtimestamp(last_day_MT5[0]['time'])
 
-def updateDB(symbol_mt5_name, last_day_BD, symbol_db_name):
+def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     count = 0
     group_rates = []
     
-    if(last_day_BD == None):
+    if(last_day_DB == None):
         rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
         if rates is None: 
             file.write(f'MT5: Falha ao obter dados de {symbol_mt5_name}\n')
@@ -54,10 +54,10 @@ def updateDB(symbol_mt5_name, last_day_BD, symbol_db_name):
         
         return
 
-    date_BD = last_day_BD['time']
-    date_start = datetime(date_BD.year, date_BD.month, date_BD.day) + timedelta(days=1)
+    date_DB = last_day_DB['time']
+    date_start = datetime(date_DB.year, date_DB.month, date_DB.day) + timedelta(days=1)
 
-    if (date_MT5 <= date_BD): return
+    if (date_MT5 <= date_DB): return
 
     rates = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_start, reference_date)
 
@@ -85,13 +85,8 @@ def updateDB(symbol_mt5_name, last_day_BD, symbol_db_name):
     if len(group_rates) != 0:
         insertDatas(group_rates, symbol_db_name)
 
-for i, symbol in enumerate(symbols):
-    last_day_BD = getLastDay(symbol)
-    updateDB(symbol, last_day_BD, symbol)
-    print("Concluído: {:.2f}".format((i + 1) / len(symbols) * 100))
-
-
-updateDB('WIN$', getLastDay('WIN'), 'WIN')
+for symbol_db_name, symbol_mt5_name  in symbols.items():
+    updateDB( symbol_db_name, getLastDay(symbol_db_name), symbol_mt5_name)
 
 file.close()
 print("Updated!")
