@@ -1,16 +1,24 @@
+import sys
 from pymongo import MongoClient
+from getRatesDatabase import FirstDate, LastDate, getDayRate
 import csv
 
-ticket = 'PETR3'
-qty = 100
+symbol = 'PETR3'
+nameFile = f"Extract (Daily) - {symbol}"
 client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
 db = client.stocks
-datas = db[ticket].find({}, {'date': 1, 'ticket': 1, 'close_price': 1, '_id': 0}).sort('date', -1).limit(qty)
+datas = getDayRate(symbol,FirstDate(2022,4,18), LastDate(2022,4,20))
 
-with open('data_extracted.csv', mode='w', newline='') as file:
+if len(datas) <= 0:
+    sys.exit('Nenhum dado encontrado no intervalo selecionado.')
+
+print("Extracting...")
+
+with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     
-    writer.writerow(["Data", "Papel", "Fechamento"])
-    for data in datas:
-        writer.writerow([data['date'].date(), data['ticket'], data['close_price']])
+    writer.writerow(["Date", "OPEN", "HIGH", "LOW", "CLOSE", "VOL. R$"])
+    for data in datas[0]['ticks']:
+        writer.writerow([data['_id'], data['open'], data['high'], data['low'], data['close'], data['day_volume']])
+
 print("Extracted!")

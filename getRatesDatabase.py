@@ -1,7 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
 
-ticket = 'PETR3'
 def FirstDate(year: int, month: int, day: int):
     first_date = datetime(year, month, day)
     return first_date

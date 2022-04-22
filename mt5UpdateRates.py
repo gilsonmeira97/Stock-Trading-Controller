@@ -18,7 +18,7 @@ file = open("log_ErrosUpdate.txt", "w")
 
 if (last_day_MT5 is None):
     file.close()
-    sys.exit("Falha ao receber ultima data MT5.")
+    sys.exit("MT5 - Falha ao receber ultima data.")
 
 date_MT5 = datetime.utcfromtimestamp(last_day_MT5[0]['time'])
 
@@ -84,6 +84,8 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
 
     if len(group_rates) != 0:
         insertDatas(group_rates, symbol_db_name)
+
+print('Updating...')
 
 for symbol_db_name, symbol_mt5_name  in symbols.items():
     updateDB( symbol_db_name, getLastDay(symbol_db_name), symbol_mt5_name)
