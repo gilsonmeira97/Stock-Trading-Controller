@@ -6,13 +6,13 @@ from Share import Share
 
 symbols_shares = getSymbols()
 yesterday_date = datetime.today() - timedelta(days=1)
-date_start = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
+reference_date = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
 file = open("log_ErrosCreate.txt", "w")
 
 for symbol in symbols_shares:
-    rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, date_start, 500000)
+    rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, reference_date, 500000)
     if rates is None: 
-        file.write(f'{symbol}\n')
+        file.write(f'MT5: Falha ao obter dados de {symbol}\n')
         continue
     count = 0
     group_rates = []
