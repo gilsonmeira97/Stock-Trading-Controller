@@ -23,13 +23,14 @@ if (last_day_MT5 is None):
 date_MT5 = datetime.utcfromtimestamp(last_day_MT5[0]['time'])
 
 def updateDB(symbol, last_day_BD):
+    count = 0
+    group_rates = []
+    
     if(last_day_BD == None):
-        rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, date_start, 500000)
+        rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, reference_date, 500000)
         if rates is None: 
             file.write(f'MT5: Falha ao obter dados de {symbol}\n')
             return
-        count = 0
-        group_rates = []
 
         for rate in rates:
             group_rates.append(
@@ -54,12 +55,10 @@ def updateDB(symbol, last_day_BD):
         return
 
     date_BD = last_day_BD['time']
+    date_start = datetime(date_BD.year, date_BD.month, date_BD.day) + timedelta(days=1)
 
     if (date_MT5 <= date_BD): return
 
-    count = 0
-    group_rates = []
-    date_start = datetime(date_BD.year, date_BD.month, date_BD.day) + timedelta(days=1)
     rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M5, date_start, reference_date)
 
     if rates is None: 
