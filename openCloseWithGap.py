@@ -2,12 +2,12 @@ from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
 
-nameFile = f"Extracted (COWF) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
+nameFile = f"Extracted (OCWF) - {str(datetime.now().timestamp()).replace('.','')}"
 f_MaxLoss = -0.01
 f_MinVolume = 100000
 f_MinOcurrences = 15
-f_varOpen = -0.003
+f_varOpen = 0.003
 
 with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -32,14 +32,15 @@ with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', n
             qty_datas += 1
             open = data['open']
             close = data['close']
+            low = data['low']
             high = data['high']
 
-            if (last_object == None) and (close < open):
+            if (last_object == None) and (close > open):
                 last_object = data
-            elif (last_object != None) and ((open / last_object['close'] - 1) <= f_varOpen):
+            elif (last_object != None) and ((open / last_object['close'] - 1) >= f_varOpen):
                 ocurrences += 1
-                if ( ((high / open - 1) * -1) > f_MaxLoss):
-                    variation = (close / open - 1) * -1
+                if ( ((low / open - 1)) > f_MaxLoss):
+                    variation = close / open - 1
                 else:
                     variation = f_MaxLoss
                 total_gain += variation
