@@ -3,7 +3,7 @@ import sys
 from time import time
 from mt5Connection import mt5
 from inputSymbols import getSymbols
-from dataInsert import insertDatas
+from dataInsert import getLastDay, insertDatas
 from Share import Share
 from pymongo import MongoClient, DESCENDING
 
@@ -22,14 +22,14 @@ if (last_day_MT5 is None):
 
 date_MT5 = datetime.utcfromtimestamp(last_day_MT5[0]['time'])
 
-def updateDB(symbol, last_day_BD):
+def updateDB(symbol_mt5_name, last_day_BD, symbol_db_name):
     count = 0
     group_rates = []
     
     if(last_day_BD == None):
-        rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, reference_date, 500000)
+        rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
         if rates is None: 
-            file.write(f'MT5: Falha ao obter dados de {symbol}\n')
+            file.write(f'MT5: Falha ao obter dados de {symbol_mt5_name}\n')
             return
 
         for rate in rates:
@@ -45,12 +45,12 @@ def updateDB(symbol, last_day_BD):
             count += 1
 
             if count == 10000:
-                insertDatas(group_rates, symbol)
+                insertDatas(group_rates, symbol_db_name)
                 group_rates = []
                 count = 0
 
         if len(group_rates) != 0:
-            insertDatas(group_rates, symbol)
+            insertDatas(group_rates, symbol_db_name)
         
         return
 
@@ -59,10 +59,10 @@ def updateDB(symbol, last_day_BD):
 
     if (date_MT5 <= date_BD): return
 
-    rates = mt5.copy_rates_range(symbol, mt5.TIMEFRAME_M5, date_start, reference_date)
+    rates = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_start, reference_date)
 
     if rates is None: 
-        file.write(f'MT5: Falha ao obter dados de {symbol}\n')
+        file.write(f'MT5: Falha ao obter dados de {symbol_mt5_name}\n')
         return
         
     for rate in rates:
@@ -78,18 +78,20 @@ def updateDB(symbol, last_day_BD):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol)
+            insertDatas(group_rates, symbol_db_name)
             group_rates = []
             count = 0
 
     if len(group_rates) != 0:
-        insertDatas(group_rates, symbol)
+        insertDatas(group_rates, symbol_db_name)
 
 for i, symbol in enumerate(symbols):
-    last_day_BD = db[symbol].find_one({},{'time': 1, '_id': 0}, sort=[('time', DESCENDING)])
-    updateDB(symbol, last_day_BD)
+    last_day_BD = getLastDay(symbol)
+    updateDB(symbol, last_day_BD, symbol)
     print("Concluído: {:.2f}".format((i + 1) / len(symbols) * 100))
 
+
+updateDB('WIN$', getLastDay('WIN'), 'WIN')
 
 file.close()
 print("Updated!")
