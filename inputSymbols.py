@@ -16,4 +16,5 @@ def getSymbols():
                 if re.match(regex,ticket) != None and ticket not in symbols_shares:
                     symbols_shares.append(ticket) 
     pass
+    symbols_shares.append('WIN')
     return symbols_shares
