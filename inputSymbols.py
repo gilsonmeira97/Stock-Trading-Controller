@@ -5,7 +5,7 @@ regex = re.compile(r'([A-Z]{4})(\d{1,2}\b)')
 def getSymbols():
     #Lista com nome das ações
     symbols_shares = {}
-    with open('COTAHIST_D14042022.txt') as document:
+    with open('COTAHIST_Reference.txt') as document:
         lines = document.readlines()
         for line in lines:
             id = line[0:2]

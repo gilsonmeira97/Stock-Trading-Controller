@@ -21,25 +21,25 @@ def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_i
         {'$match':
             {
             '$and': [
-                {'time':
+                {'date':
                 {
                     '$gte': first_date,
                     '$lte': last_date
                 }
                 }
             ],
-            '$expr': { "$and": [ { "$and": [{"$gte": [{ "$hour": "$time" }, start_interval.hour ] }, {"$gte": [{ "$minute": "$time" }, start_interval.minute ] }]}, { "$and": [{"$lte": [{ "$hour": "$time" }, end_interval.hour ]}, {"$lte": [{ "$minute": "$time" }, end_interval.minute ]}] } ] }
+            '$expr': { "$and": [ { "$and": [{"$gte": [{ "$hour": "$date" }, start_interval.hour ] }, {"$gte": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$lte": [{ "$hour": "$date" }, end_interval.hour ]}, {"$lte": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
             }
         },{
             '$project': {
             'date': {
                 '$dateToString': {
-                'date': '$time',
+                'date': '$date',
                 'format': '%Y-%m-%d'
                 }
             },
             'tick': { 
-                "time": '$time',
+                "date": '$date',
                 "open": '$open',
                 "close": '$close',
                 "high": '$high',
@@ -51,7 +51,7 @@ def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_i
         },
         {
             '$sort': {
-            'tick.time': 1
+            'tick.date': 1
             }
         },
         {
@@ -78,25 +78,25 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
         {'$match':
             {
             '$and': [
-                {'time':
+                {'date':
                 {
                     '$gte': first_date,
                     '$lte': last_date
                 }
                 }
             ],
-            '$expr': { "$or": [ { "$and": [{"$eq": [{ "$hour": "$time" }, start_interval.hour ] }, {"$eq": [{ "$minute": "$time" }, start_interval.minute ] }]}, { "$and": [{"$eq": [{ "$hour": "$time" }, end_interval.hour ]}, {"$eq": [{ "$minute": "$time" }, end_interval.minute ]}] } ] }
+            '$expr': { "$or": [ { "$and": [{"$eq": [{ "$hour": "$date" }, start_interval.hour ] }, {"$eq": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$eq": [{ "$hour": "$date" }, end_interval.hour ]}, {"$eq": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
             }
         },{
             '$project': {
             'date': {
                 '$dateToString': {
-                'date': '$time',
+                'date': '$date',
                 'format': '%Y-%m-%d'
                 }
             },
             'tick': { 
-                "time": '$time',
+                "time": '$date',
                 "open": '$open',
                 "close": '$close',
                 "high": '$high',
@@ -108,7 +108,7 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
         },
         {
             '$sort': {
-            'tick.time': 1
+            'tick.date': 1
             }
         },
         {
@@ -134,7 +134,7 @@ def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0
     datas = db[ticket].aggregate([
         {
             "$match": {
-                "time": {
+                "date": {
                     '$gte': first_date,
                     '$lte': last_date
                 }
@@ -142,7 +142,7 @@ def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0
         },
         {
             "$sort": {
-            "time": 1
+            "date": 1
         }
         },
         {
@@ -150,11 +150,10 @@ def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0
                 
                 'date': {
                     "$dateToString": {
-                    "date": '$time',
+                    "date": '$date',
                     "format": '%Y-%m-%d'
                     }
                 },
-                "time": "$time",
                 "tick": {
                     "open": '$open',
                     "close": '$close',

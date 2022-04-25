@@ -2,17 +2,18 @@ from datetime import datetime, timedelta
 from mt5Connection import mt5
 from inputSymbols import getSymbols
 from dataInsert import insertDatas
+from logManager import writeLog
 from Share import Share
 
 symbols_shares = getSymbols()
 yesterday_date = datetime.today() - timedelta(days=1)
 reference_date = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
-file = open("log_ErrosCreate.txt", "w")
+file = open("logs/log_ErrosCreate.txt", "a")
 
 for symbol in symbols_shares:
     rates = mt5.copy_rates_from(symbol, mt5.TIMEFRAME_M5, reference_date, 500000)
     if rates is None: 
-        file.write(f'MT5: Falha ao obter dados de {symbol}\n')
+        writeLog(file, f'MT5: Falha ao obter dados de {symbol}')
         continue
     count = 0
     group_rates = []

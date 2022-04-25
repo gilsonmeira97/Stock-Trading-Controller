@@ -5,6 +5,7 @@ from mt5Connection import mt5
 from inputSymbols import getSymbols
 from dataInsert import getLastDay, insertDatas
 from Share import Share
+from logManager import writeLog
 from pymongo import MongoClient, DESCENDING
 
 reference = "PETR3"
@@ -14,7 +15,7 @@ reference_date = datetime(yesterday_date.year, yesterday_date.month, yesterday_d
 client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
 db = client.stocks
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
-file = open("log_ErrosUpdate.txt", "w")
+file = open("logs/log_ErrosUpdate.txt", "a")
 
 if (last_day_MT5 is None):
     file.close()
@@ -29,7 +30,7 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     if(last_day_DB == None):
         rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
         if rates is None: 
-            file.write(f'MT5: Falha ao obter dados de {symbol_mt5_name}\n')
+            writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name}')
             return
 
         for rate in rates:
@@ -62,7 +63,7 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     rates = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_start, reference_date)
 
     if rates is None: 
-        file.write(f'MT5: Falha ao obter dados de {symbol_mt5_name}\n')
+        writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name}')
         return
         
     for rate in rates:
