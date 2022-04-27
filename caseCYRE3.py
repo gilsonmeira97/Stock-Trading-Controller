@@ -2,13 +2,13 @@ from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
 
-nameFile = f"Extracted (COWF) - {str(datetime.now().timestamp()).replace('.','')}"
+nameFile = f"Extracted (Case CYRE3) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopLoss = -0.0145
+f_StopGain = 0.01
 f_MinVolume = 100000
 f_MinOcurrences = 15
-f_varReference = -0.003
-f_date_start = FirstDate(2018,4,18)
+f_varReference = 0.005
+f_date_start = FirstDate(2011,4,18)
 f_date_end = LastDate(2022,4,20)
 
 with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
@@ -35,15 +35,16 @@ with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', n
             open = data['open']
             close = data['close']
             high = data['high']
+            low = data['low']
 
-            if (last_object == None) and (close < open):
+            if (last_object == None) and ((close / low - 1) <= f_varReference):
                 last_object = data
-            elif (last_object != None) and ((open / last_object['close'] - 1) <= f_varReference):
+            elif (last_object != None):
                 ocurrences += 1
-                if ( ((high / open - 1) * -1) > f_StopLoss):
-                    variation = (close / open - 1) * -1
+                if ( (high / last_object['close'] - 1) >= f_StopGain):
+                    variation = f_StopGain
                 else:
-                    variation = f_StopLoss
+                    variation = close / last_object['close'] - 1
                 total_gain += variation
 
                 if (variation <= 0):
@@ -54,14 +55,13 @@ with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', n
                     maximum_gain = variation if variation > maximum_gain else maximum_gain
 
                 last_object = None
-            elif (last_object != None):
-                last_object = None
+
 
         if (ocurrences > 0):
             avg_gain = total_gain / ocurrences
             percentual_acertos = acertos / ocurrences
         
-        if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.003) or (percentual_acertos <= 0.25 and avg_gain < -0.003)):
+        if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.0025) or (percentual_acertos <= 0.25 and avg_gain < -0.0025)):
             writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 print("Ready!")
