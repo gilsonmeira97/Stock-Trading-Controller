@@ -45,7 +45,7 @@ with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', n
                 if ((high / last_object['close'] - 1) >= f_StopGain): # and (low / last_object['close'] - 1) > f_StopLoss)
                     variation = f_StopGain
                 else:
-                    variation =  f_StopLoss # close / last_object['close'] - 1
+                    variation =  close / last_object['close'] - 1
                 total_gain += variation
 
                 if (variation <= 0):
