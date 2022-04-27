@@ -4,7 +4,8 @@ import csv
 
 nameFile = f"Extracted (Case CYRE3) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopGain = 0.01
+f_StopGain = 0.016
+f_StopLoss = -0.016
 f_MinVolume = 100000
 f_MinOcurrences = 15
 f_varReference = 0.005
@@ -41,10 +42,10 @@ with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', n
                 last_object = data
             elif (last_object != None):
                 ocurrences += 1
-                if ( (high / last_object['close'] - 1) >= f_StopGain):
+                if ((high / last_object['close'] - 1) >= f_StopGain): # and (low / last_object['close'] - 1) > f_StopLoss)
                     variation = f_StopGain
                 else:
-                    variation = close / last_object['close'] - 1
+                    variation =  f_StopLoss # close / last_object['close'] - 1
                 total_gain += variation
 
                 if (variation <= 0):
