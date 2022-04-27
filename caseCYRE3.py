@@ -8,7 +8,7 @@ f_StopGain = 0.01
 f_MinVolume = 100000
 f_MinOcurrences = 15
 f_varReference = 0.005
-f_date_start = FirstDate(2011,4,18)
+f_date_start = FirstDate(2021,4,18)
 f_date_end = LastDate(2022,4,20)
 
 with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
