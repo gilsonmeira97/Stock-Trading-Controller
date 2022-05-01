@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from mt5Connection import mt5
 from inputSymbols import getSymbols
-from dataInsert import insertDatas
+from dbOperations import insertDatas
 from logManager import writeLog
 from Share import Share
 

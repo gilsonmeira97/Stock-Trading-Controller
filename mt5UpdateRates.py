@@ -1,69 +1,57 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import sys
-from time import time
 from mt5Connection import mt5
 from inputSymbols import getSymbols
-from dataInsert import getLastDay, insertDatas
+from dbOperations import getLastDay, insertDatas, dropCol, getUTC
 from Share import Share
 from logManager import writeLog
 from pymongo import MongoClient, DESCENDING
 
 reference = "PETR3"
 symbols = getSymbols()
-yesterday_date = datetime.today() - timedelta(days=1)
-reference_date = datetime(yesterday_date.year, yesterday_date.month, yesterday_date.day, 23,59)  # Data mais recente
+reference_date = getUTC(datetime.today())  # Data mais recente
 client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
 db = client.stocks
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
-file = open("logs/log_ErrosUpdate.txt", "a")
 
 if (last_day_MT5 is None):
-    file.close()
     sys.exit("MT5 - Falha ao receber ultima data.")
 
-date_MT5 = datetime.utcfromtimestamp(last_day_MT5[0]['time'])
+date_MT5 = getUTC(datetime.utcfromtimestamp(last_day_MT5[0]['time']))
+file = open("logs/log_ErrosUpdate.txt", "a")
 
-def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
-    count = 0
-    group_rates = []
-    
-    if(last_day_DB == None):
-        rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
-        if rates is None: 
-            writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name}')
-            return
-
-        for rate in rates:
-            group_rates.append(
-                vars(
-                    Share(
-                        rate['time'], rate["open"], rate["high"], 
-                        rate["low"], rate["close"], rate["tick_volume"], 
-                        rate["real_volume"]
-                    )
-                )
-            )
-            count += 1
-
-            if count == 10000:
-                insertDatas(group_rates, symbol_db_name)
-                group_rates = []
-                count = 0
-
-        if len(group_rates) != 0:
-            insertDatas(group_rates, symbol_db_name)
-        
+def newStock(symbol_db_name, symbol_mt5_name):
+    rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
+    if rates is None: 
+        writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (newStock)')
         return
 
-    date_DB = last_day_DB['time']
-    date_start = datetime(date_DB.year, date_DB.month, date_DB.day) + timedelta(days=1)
+    for rate in rates:
+        group_rates.append(
+            vars(
+                Share(
+                    rate['time'], rate["open"], rate["high"], 
+                    rate["low"], rate["close"], rate["tick_volume"], 
+                    rate["real_volume"]
+                )
+            )
+        )
+        count += 1
 
-    if (date_MT5 <= date_DB): return
+        if count == 10000:
+            insertDatas(group_rates, symbol_db_name)
+            group_rates = []
+            count = 0
 
+    if len(group_rates) != 0:
+        insertDatas(group_rates, symbol_db_name)
+
+def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
+    date_start = date_DB + timedelta(minutes=1)
     rates = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_start, reference_date)
 
     if rates is None: 
-        writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name}')
+        writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (updateStock)')
         return
         
     for rate in rates:
@@ -85,6 +73,32 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
 
     if len(group_rates) != 0:
         insertDatas(group_rates, symbol_db_name)
+
+
+def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
+    count = 0
+    group_rates = []
+    
+    if(last_day_DB == None):
+        newStock(symbol_db_name, symbol_mt5_name)
+        return
+
+    date_DB = getUTC(last_day_DB['date'])
+    
+    dividend_test = mt5.copy_rates_range(reference, mt5.TIMEFRAME_M5, date_DB, date_DB)
+    
+    if dividend_test is None: 
+        writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (dividendTest)')
+        return
+
+    if(dividend_test[0]['close'] != last_day_DB['close'] ):
+        writeLog(file, f'DB: Ajuste de dividendos em {symbol_mt5_name}')
+        if (dropCol(symbol_db_name)): newStock(symbol_db_name, symbol_mt5_name)
+        return
+
+    if (date_MT5 <= date_DB): return
+    
+    updateStock(symbol_db_name, symbol_mt5_name, date_DB)
 
 print('Updating...')
 

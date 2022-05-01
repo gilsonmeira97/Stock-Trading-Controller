@@ -32,26 +32,26 @@ def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_i
             }
         },{
             '$project': {
-            'date': {
-                '$dateToString': {
-                'date': '$date',
-                'format': '%Y-%m-%d'
+                'date': {
+                    '$dateToString': {
+                    'date': '$date',
+                    'format': '%Y-%m-%d'
+                    }
+                },
+                'tick': { 
+                    "date": '$date',
+                    "open": '$open',
+                    "close": '$close',
+                    "high": '$high',
+                    "low": '$low',
+                    "tick_volume": '$tick_volume',
+                    "real_volume": '$real_volume'
                 }
-            },
-            'tick': { 
-                "date": '$date',
-                "open": '$open',
-                "close": '$close',
-                "high": '$high',
-                "low": '$low',
-                "tick_volume": '$tick_volume',
-                "real_volume": '$real_volume'
-            }
             }
         },
         {
             '$sort': {
-            'tick.date': 1
+                'tick.date': 1
             }
         },
         {
@@ -96,7 +96,7 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
                 }
             },
             'tick': { 
-                "time": '$date',
+                "date": '$date',
                 "open": '$open',
                 "close": '$close',
                 "high": '$high',
