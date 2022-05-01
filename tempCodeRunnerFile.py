@@ -1,1 +1,0 @@
-teste[0]['time']).replace(tzinfo=timezone.utc) )
