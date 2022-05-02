@@ -1,10 +1,12 @@
 import sys
 from getRatesDatabase import FirstDate, LastDate, getDayRate
+from dbOperations import getConnection
 import csv
 
 symbol = 'PETR3'
+client, db = getConnection()
 nameFile = f"Extracted (Daily) - {symbol}"
-datas = getDayRate(symbol,FirstDate(2022,4,18), LastDate(2022,4,20))
+datas = getDayRate(symbol, db, FirstDate(2021,4,18), LastDate(2022,4,25), 0, -1)
 
 if len(datas) <= 0:
     sys.exit('Nenhum dado encontrado no intervalo selecionado.')
@@ -18,4 +20,5 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     for data in datas[0]['ticks']:
         writer.writerow([data['_id'], data['open'], data['high'], data['low'], data['close'], data['day_volume']])
 
+client.close()
 print("Extracted!")

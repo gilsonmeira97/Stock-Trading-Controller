@@ -1,8 +1,10 @@
 import __sub__
+from dbOperations import getConnection
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
 
+client, db = getConnection()
 nameFile = f"Extracted (Case CYRE3) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_StopGain = 0.016
@@ -18,7 +20,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
     
     for i, symbol in enumerate(symbols):
-        data_result = getDayRate(symbol, f_date_start, f_date_end, f_MinVolume)
+        data_result = getDayRate(symbol, db, f_date_start, f_date_end, f_MinVolume)
         if len(data_result) <= 0: continue
         data_result = data_result[0]
         datas = data_result['ticks']
@@ -66,4 +68,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.0025) or (percentual_acertos <= 0.25 and avg_gain < -0.0025)):
             writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
+
+client.close()
 print("Ready!")

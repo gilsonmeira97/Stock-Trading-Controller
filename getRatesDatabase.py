@@ -1,5 +1,4 @@
 from datetime import datetime
-from dbOperations import getConnection
 
 def FirstDate(year: int, month: int, day: int):
     first_date = datetime(year, month, day)
@@ -14,8 +13,7 @@ def DateTime(hour: int, minute: int):
     return time
 
 # Retorna as cotações de um intervalo de dia e horas
-def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
-    client, db = getConnection()
+def getRatesInterval(ticket, db, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
     datas = db[ticket].aggregate([
         {'$match':
             {
@@ -70,8 +68,7 @@ def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_i
     return datas
 
 # Retorna duas cotações por dia
-def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
-    client, db = getConnection()
+def getTwoRates(ticket, db, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
     datas = db[ticket].aggregate([
         {'$match':
             {
@@ -126,8 +123,7 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
     return datas
 
 # Retorna as informações diarias (OHCL)
-def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
-    client, db = getConnection()
+def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
     datas = db[ticket].aggregate([
         {
             "$match": {
