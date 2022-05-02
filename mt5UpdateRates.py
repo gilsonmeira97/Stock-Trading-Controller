@@ -8,7 +8,8 @@ from logManager import writeLog
 
 reference = "PETR3"
 symbols = getSymbols()
-reference_date = getUTC(datetime.today())  # Data mais recente
+y_date = datetime.today() - timedelta(days=2)
+reference_date = getUTC(datetime(y_date.year, y_date.month, y_date.day, 23, 59)) # Data mais recente
 client, db = getConnection()
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
 
