@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from datetime import datetime
+from dbOperations import getConnection
 
 def FirstDate(year: int, month: int, day: int):
     first_date = datetime(year, month, day)
@@ -129,8 +130,7 @@ def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interv
 
 # Retorna as informações diarias (OHCL)
 def getDayRate(ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
-    client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
-    db = client.stocks
+    client, db = getConnection()
     datas = db[ticket].aggregate([
         {
             "$match": {

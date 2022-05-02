@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import sys
 from mt5Connection import mt5
 from inputSymbols import getSymbols
 from dbOperations import getConnection, getLastDay, insertDatas, dropCol, getUTC
 from Share import Share
 from logManager import writeLog
-from pymongo import MongoClient, DESCENDING
 
 reference = "PETR3"
 symbols = getSymbols()
@@ -70,7 +69,7 @@ def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol_db_name,db)
+            insertDatas(group_rates, symbol_db_name, db)
             group_rates = []
             count = 0
 
