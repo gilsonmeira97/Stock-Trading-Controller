@@ -1,17 +1,18 @@
+import __sub__
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
 
 nameFile = f"Extracted (COWF) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopLoss = -0.0145
+f_StopLoss = -0.0175
 f_MinVolume = 100000
 f_MinOcurrences = 15
-f_varReference = -0.003
+f_varReference = -0.0025
 f_date_start = FirstDate(2021,4,18)
 f_date_end = LastDate(2022,4,20)
 
-with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
+with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
     

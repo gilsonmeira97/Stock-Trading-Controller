@@ -4,7 +4,7 @@ from getRatesDatabase import FirstDate, LastDate, getDayRate
 import csv
 
 symbol = 'PETR3'
-nameFile = f"Extract (Daily) - {symbol}"
+nameFile = f"Extracted (Daily) - {symbol}"
 client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
 db = client.stocks
 datas = getDayRate(symbol,FirstDate(2022,4,18), LastDate(2022,4,20))
