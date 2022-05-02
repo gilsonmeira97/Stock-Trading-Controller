@@ -8,34 +8,42 @@ Primeiramente faça a instalação dos seguintes programas: [**mongoDB**](https:
 <br>
 
 Clone o repositório com o comando:
-> ```git clone https://github.com/gilsonmeira97/Stock-Trading-Controller.git```
+```
+git clone https://github.com/gilsonmeira97/Stock-Trading-Controller.git
+```
 
 <br>
 
 Entre na pasta do projeto com o comando: 
-> ```cd ./Stock-Trading-Controller```
+```
+cd ./Stock-Trading-Controller
+```
 
 <br>
 
 Faça a instalação dos requerimentos com o comando: 
-> ```pip install -r ./requirements.txt```
+```
+pip install -r ./requirements.txt
+```
 
 <br>
 
-Crie um arquivo na raiz do projeto com o nome **.env** com a seguinte estrutura:
->LOGIN='Login na corretora - Ex: 5748754'
->SERVER='Nome do servidor da corretora - Ex: HPXT5-DEMO'
+Crie um arquivo na raiz do projeto com o nome ***.env*** com a seguinte estrutura:
+>LOGIN='Login na corretora - Ex: 5748754'<br>
+>SERVER='Nome do servidor da corretora - Ex: HPXT5-DEMO'<br>
 >PASSWORD='Senha na corretora - Ex: ABC123456'
 
 <br>
 
-Faça o download do histórico de cotação diária **(Mais recente de preferência)** através do link abaixo, salve o arquivo na pasta raiz do projeto com o nome **'COTAHIST_Reference.txt'**:
+Faça o download do histórico de cotação diária **(Mais recente de preferência)** através do link abaixo, salve o arquivo na pasta raiz do projeto com o nome ***'COTAHIST_Reference.txt'***:
 >https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/
 
 <br>
 
 Após isso, basta rodar o comando: 
-> ```python ./mt5UpdateRates.py```
+```
+python ./mt5UpdateRates.py
+```
 
 <br>
 
