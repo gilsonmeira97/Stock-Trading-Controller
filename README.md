@@ -56,14 +56,23 @@ O database terá diversas collections, onde cada uma representará um ativo e ca
 ```
 Stocks(Database) {
 	PETR3(Collection): {
-		{'date', 'open', 'close', 'high', 'close', 'real_volume', 'tick_volume' },
-		{'date', 'open', 'close', 'high', 'close', 'real_volume', 'tick_volume' },
+		{'date', 'open', 'close', 'high', 'low', 'real_volume', 'tick_volume' },
+		{'date', 'open', 'close', 'high', 'low', 'real_volume', 'tick_volume' },
 		...
 	},
 	VALE3(Collection): {
-		{'date', 'open', 'close', 'high', 'close', 'real_volume', 'tick_volume' },
-		{'date', 'open', 'close', 'high', 'close', 'real_volume', 'tick_volume' },
+		{'date', 'open', 'close', 'high', 'low', 'real_volume', 'tick_volume' },
+		{'date', 'open', 'close', 'high', 'low', 'real_volume', 'tick_volume' },
 		...
 	}
 }
 ```
+
+<br>
+
+## Observações:
+- A lib ***Metatrader5*** só está disponível para plataforma Windows, logo, não será possível obter as cotações através de uma plataforma linux.
+- csvExtract tem como função exportar as cotações de um determinado ativo.
+- A pasta tempTest contem arquivos com funcionalidades em teste, a mesma não é referenciada por nenhum outro arquivo podendo até mesmo ser excluída.
+- o arquivo ***\_\_sub\_\_.py*** é utilizado apenas para referenciar o diretório raiz nos subdiretórios, o que permite utilizar módulos do diretório raiz em arquivos que estão em subdiretórios.
+- A pasta ***strategies*** é destinada a armazenar as estratégias que serão testadas.
