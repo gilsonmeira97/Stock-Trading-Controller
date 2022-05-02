@@ -1,4 +1,3 @@
-from pymongo import MongoClient
 from datetime import datetime
 from dbOperations import getConnection
 
@@ -16,8 +15,7 @@ def DateTime(hour: int, minute: int):
 
 # Retorna as cotações de um intervalo de dia e horas
 def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
-    client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
-    db = client.stocks
+    client, db = getConnection()
     datas = db[ticket].aggregate([
         {'$match':
             {
@@ -73,8 +71,7 @@ def getRatesInterval(ticket, first_date: FirstDate, last_date: LastDate, start_i
 
 # Retorna duas cotações por dia
 def getTwoRates(ticket, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
-    client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
-    db = client.stocks
+    client, db = getConnection()
     datas = db[ticket].aggregate([
         {'$match':
             {

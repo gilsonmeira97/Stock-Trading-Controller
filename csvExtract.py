@@ -1,12 +1,9 @@
 import sys
-from pymongo import MongoClient
 from getRatesDatabase import FirstDate, LastDate, getDayRate
 import csv
 
 symbol = 'PETR3'
 nameFile = f"Extracted (Daily) - {symbol}"
-client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
-db = client.stocks
 datas = getDayRate(symbol,FirstDate(2022,4,18), LastDate(2022,4,20))
 
 if len(datas) <= 0:
@@ -14,7 +11,7 @@ if len(datas) <= 0:
 
 print("Extracting...")
 
-with open(f'C:\\Users\\Gilson\\Projects\\Extraidos\\{nameFile}.csv', mode='w', newline='') as file:
+with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     
     writer.writerow(["Date", "OPEN", "HIGH", "LOW", "CLOSE", "VOL. R$"])
