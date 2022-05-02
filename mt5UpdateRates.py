@@ -87,7 +87,7 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     
     dividend_test = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_DB, date_DB)
     
-    if dividend_test is None or len(dividend_test) == 0: 
+    if dividend_test is None: 
         writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (dividendTest)')
         return
 
