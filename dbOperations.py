@@ -1,22 +1,21 @@
-from pymongo import MongoClient, DESCENDING
 from datetime import *
+from pymongo import MongoClient, DESCENDING
 
-def insertDatas(rates, symbol):
-   with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
-      db = client.stocks
-      db[symbol].insert_many(rates)
+def getConnection(fsync = False):
+    client =  MongoClient(port = 27017, serverSelectionTimeoutMS = 10000, fsync = fsync)
+    db = client.stocks
+    return client, db
 
-def getLastDay(symbol):
-   with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
-      db = client.stocks
-      last_day_BD = db[symbol].find_one({},{'date': 1, 'close': 1, '_id': 0}, sort=[('date', DESCENDING)])
-      return last_day_BD
+def insertDatas(rates, symbol, db):
+   db[symbol].insert_many(rates)
 
-def dropCol(symbol):
-   with MongoClient(port = 27017, serverSelectionTimeoutMS = 10000) as client:
-      db = client.stocks
-      isDropped = db[symbol].drop()
-      return isDropped
+def getLastDay(symbol, db):
+   last_day_BD = db[symbol].find_one({},{'date': 1, 'close': 1, '_id': 0}, sort=[('date', DESCENDING)])
+   return last_day_BD
+
+def dropCol(symbol, db):
+   response = db.drop_collection(symbol)
+   return response
 
 def getUTC(date):
     return date.replace(tzinfo=timezone.utc)

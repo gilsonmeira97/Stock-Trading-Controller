@@ -5,12 +5,12 @@ import csv
 
 nameFile = f"Extracted (COWF) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopLoss = -0.0175
+f_StopLoss = -0.0165
 f_MinVolume = 100000
-f_MinOcurrences = 15
+f_MinOcurrences = 10
 f_varReference = -0.0025
-f_date_start = FirstDate(2021,4,18)
-f_date_end = LastDate(2022,4,20)
+f_date_start = FirstDate(2022,4,14)
+f_date_end = LastDate(2022,4,18)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)

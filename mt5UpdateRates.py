@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 import sys
 from mt5Connection import mt5
 from inputSymbols import getSymbols
-from dbOperations import getLastDay, insertDatas, dropCol, getUTC
+from dbOperations import getConnection, getLastDay, insertDatas, dropCol, getUTC
 from Share import Share
 from logManager import writeLog
 from pymongo import MongoClient, DESCENDING
@@ -10,8 +10,7 @@ from pymongo import MongoClient, DESCENDING
 reference = "PETR3"
 symbols = getSymbols()
 reference_date = getUTC(datetime.today())  # Data mais recente
-client = MongoClient(port = 27017, serverSelectionTimeoutMS = 10000)
-db = client.stocks
+client, db = getConnection()
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
 
 if (last_day_MT5 is None):
@@ -41,12 +40,12 @@ def newStock(symbol_db_name, symbol_mt5_name):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol_db_name)
+            insertDatas(group_rates, symbol_db_name, db)
             group_rates = []
             count = 0
 
     if len(group_rates) != 0:
-        insertDatas(group_rates, symbol_db_name)
+        insertDatas(group_rates, symbol_db_name, db)
 
 def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
     count = 0
@@ -71,12 +70,12 @@ def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol_db_name)
+            insertDatas(group_rates, symbol_db_name,db)
             group_rates = []
             count = 0
 
     if len(group_rates) != 0:
-        insertDatas(group_rates, symbol_db_name)
+        insertDatas(group_rates, symbol_db_name, db)
 
 
 def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
@@ -88,13 +87,15 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     
     dividend_test = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_DB, date_DB)
     
-    if dividend_test is None: 
+    if dividend_test is None or len(dividend_test) == 0: 
         writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (dividendTest)')
         return
 
     if(dividend_test[0]['close'] != last_day_DB['close'] ):
         writeLog(file, f'DB: Ajuste de dividendos em {symbol_mt5_name}')
-        if (dropCol(symbol_db_name)): newStock(symbol_db_name, symbol_mt5_name)
+        drop_res = dropCol(symbol_db_name, db)
+        if 'ns' in drop_res: 
+            newStock(symbol_db_name, symbol_mt5_name)
         return
 
     if (date_MT5 <= date_DB): return
@@ -105,7 +106,8 @@ print('Updating...')
 writeLog(file, f'DB: Atualização da base de dados - (Update)')
 
 for symbol_db_name, symbol_mt5_name  in symbols.items():
-    updateDB( symbol_db_name, getLastDay(symbol_db_name), symbol_mt5_name)
+    updateDB( symbol_db_name, getLastDay(symbol_db_name, db), symbol_mt5_name)
 
 file.close()
+client.close()
 print("Updated!")

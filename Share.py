@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Share:
     def __init__(self, date, open, high, low, close, tick_volume, real_volume):
-        self.date = datetime.utcfromtimestamp(date)
+        self.date = datetime.utcfromtimestamp(date).replace(tzinfo=timezone.utc)
         self.open = float(open)
         self.high = float(high)
         self.low = float(low)
