@@ -1,9 +1,9 @@
 # Stock-Trading-Controller
-Projeto para obter as cotações diárias da B3 através do software de negociação MetaTrader 5.
+Projeto para obter as cotações diárias da B3 através do software de negociação MetaTrader 5.  
 As cotação são obtidas através da lib **"Metatrader5"** e são gravadas em uma base de dados mongoDB.
 
 ## Como utilizar o projeto:
-Primeiramente faça a instalação dos seguintes programas: [**mongoDB**](https://www.mongodb.com/try/download/community), [**Metatrader 5**](https://www.metatrader5.com/es/download), [**Git**](https://git-scm.com/downloads).
+Primeiramente faça a instalação dos seguintes programas: [**mongoDB**](https://www.mongodb.com/try/download/community), [**Metatrader 5**](https://www.metatrader5.com/es/download), [**Git**](https://git-scm.com/downloads), [**Python 3**](https://www.python.org/downloads/).
 
 <br>
 
