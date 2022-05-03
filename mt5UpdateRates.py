@@ -9,6 +9,7 @@ from logManager import writeLog
 reference = "PETR3"
 symbols = getSymbols()
 y_date = datetime.today() - timedelta(days=2)
+date_zero =  getUTC(datetime(2000, 1, 1, 0, 0))
 reference_date = getUTC(datetime(y_date.year, y_date.month, y_date.day, 23, 59)) # Data mais recente
 client, db = getConnection()
 last_day_MT5 = mt5.copy_rates_from(reference, mt5.TIMEFRAME_M5, reference_date, 1)
@@ -22,7 +23,7 @@ file = open("logs/log_ErrosUpdate.txt", "a")
 def newStock(symbol_db_name, symbol_mt5_name):
     count = 0
     group_rates = []
-    rates = mt5.copy_rates_from(symbol_mt5_name, mt5.TIMEFRAME_M5, reference_date, 500000)
+    rates = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_zero, reference_date)
     if rates is None: 
         writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (newStock)')
         return
