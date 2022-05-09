@@ -12,7 +12,7 @@ f_date_end = LastDate(2022,4,20)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Ativo', 'Qtd Registros, Horário Mínima, Ocorrências'])
+    writer.writerow(['Ativo', 'Qtd Registros', 'Horario Minima', 'Ocorrencias'])
     
     for i, symbol in enumerate(symbols):
         datas = getTimesMin(symbol, db, f_date_start, f_date_end)
