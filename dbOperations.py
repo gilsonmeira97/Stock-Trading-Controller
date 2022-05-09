@@ -2,7 +2,7 @@ from datetime import *
 from pymongo import MongoClient, DESCENDING
 
 def getConnection(fsync = False):
-    client =  MongoClient(port = 27017, serverSelectionTimeoutMS = 10000, fsync = fsync)
+    client =  MongoClient(port = 27017, serverSelectionTimeoutMS = 10000, fsync = fsync, maxIdleTimeMS = 300000)
     db = client.stocks
     return client, db
 

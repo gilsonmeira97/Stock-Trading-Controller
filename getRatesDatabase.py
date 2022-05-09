@@ -15,53 +15,53 @@ def DateTime(hour: int, minute: int):
 # Retorna as cotações de um intervalo de dia e horas
 def getRatesInterval(ticket, db, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
     datas = db[ticket].aggregate([
-        {'$match':
+        {"$match":
             {
-            '$and': [
-                {'date':
+            "$and": [
+                {"date":
                 {
-                    '$gte': first_date,
-                    '$lte': last_date
+                    "$gte": first_date,
+                    "$lte": last_date
                 }
                 }
             ],
-            '$expr': { "$and": [ { "$and": [{"$gte": [{ "$hour": "$date" }, start_interval.hour ] }, {"$gte": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$lte": [{ "$hour": "$date" }, end_interval.hour ]}, {"$lte": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
+            "$expr": { "$and": [ { "$and": [{"$gte": [{ "$hour": "$date" }, start_interval.hour ] }, {"$gte": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$lte": [{ "$hour": "$date" }, end_interval.hour ]}, {"$lte": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
             }
         },{
-            '$project': {
-                'date': {
-                    '$dateToString': {
-                    'date': '$date',
-                    'format': '%Y-%m-%d'
+            "$project": {
+                "date": {
+                    "$dateToString": {
+                    "date": "$date",
+                    "format": "%Y-%m-%d"
                     }
                 },
-                'tick': { 
-                    "date": '$date',
-                    "open": '$open',
-                    "close": '$close',
-                    "high": '$high',
-                    "low": '$low',
-                    "tick_volume": '$tick_volume',
-                    "real_volume": '$real_volume'
+                "tick": { 
+                    "date": "$date",
+                    "open": "$open",
+                    "close": "$close",
+                    "high": "$high",
+                    "low": "$low",
+                    "tick_volume": "$tick_volume",
+                    "real_volume": "$real_volume"
                 }
             }
         },
         {
-            '$sort': {
-                'tick.date': 1
+            "$sort": {
+                "tick.date": 1
             }
         },
         {
-            '$group': { 
-                '_id': '$date', 
+            "$group": { 
+                "_id": "$date", 
                 "ticks" : {
                     "$push" : "$tick",
                 }
             }
         },
         {
-            '$sort': {
-            '_id': order
+            "$sort": {
+            "_id": order
             }
         }  
     ])
@@ -70,53 +70,53 @@ def getRatesInterval(ticket, db, first_date: FirstDate, last_date: LastDate, sta
 # Retorna duas cotações por dia
 def getTwoRates(ticket, db, first_date: FirstDate, last_date: LastDate, start_interval: DateTime, end_interval: DateTime, order = 1):
     datas = db[ticket].aggregate([
-        {'$match':
+        {"$match":
             {
-            '$and': [
-                {'date':
+            "$and": [
+                {"date":
                 {
-                    '$gte': first_date,
-                    '$lte': last_date
+                    "$gte": first_date,
+                    "$lte": last_date
                 }
                 }
             ],
-            '$expr': { "$or": [ { "$and": [{"$eq": [{ "$hour": "$date" }, start_interval.hour ] }, {"$eq": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$eq": [{ "$hour": "$date" }, end_interval.hour ]}, {"$eq": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
+            "$expr": { "$or": [ { "$and": [{"$eq": [{ "$hour": "$date" }, start_interval.hour ] }, {"$eq": [{ "$minute": "$date" }, start_interval.minute ] }]}, { "$and": [{"$eq": [{ "$hour": "$date" }, end_interval.hour ]}, {"$eq": [{ "$minute": "$date" }, end_interval.minute ]}] } ] }
             }
         },{
-            '$project': {
-            'date': {
-                '$dateToString': {
-                'date': '$date',
-                'format': '%Y-%m-%d'
+            "$project": {
+            "date": {
+                "$dateToString": {
+                "date": "$date",
+                "format": "%Y-%m-%d"
                 }
             },
-            'tick': { 
-                "date": '$date',
-                "open": '$open',
-                "close": '$close',
-                "high": '$high',
-                "low": '$low',
-                "tick_volume": '$tick_volume',
-                "real_volume": '$real_volume'
+            "tick": { 
+                "date": "$date",
+                "open": "$open",
+                "close": "$close",
+                "high": "$high",
+                "low": "$low",
+                "tick_volume": "$tick_volume",
+                "real_volume": "$real_volume"
             }
             }
         },
         {
-            '$sort': {
-            'tick.date': 1
+            "$sort": {
+            "tick.date": 1
             }
         },
         {
-            '$group': { 
-                '_id': '$date', 
+            "$group": { 
+                "_id": "$date", 
                 "ticks" : {
                     "$push" : "$tick"
                 }
             }
         },
         {
-            '$sort': {
-            '_id': order
+            "$sort": {
+            "_id": order
             }
         }  
     ])
@@ -128,8 +128,8 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
         {
             "$match": {
                 "date": {
-                    '$gte': first_date,
-                    '$lte': last_date
+                    "$gte": first_date,
+                    "$lte": last_date
                 }
             }
         },
@@ -139,20 +139,20 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
         }
         },
         {
-            '$project': {
+            "$project": {
                 
-                'date': {
+                "date": {
                     "$dateToString": {
-                    "date": '$date',
-                    "format": '%Y-%m-%d'
+                    "date": "$date",
+                    "format": "%Y-%m-%d"
                     }
                 },
                 "tick": {
-                    "open": '$open',
-                    "close": '$close',
-                    "high": '$high',
-                    "low": '$low',
-                    "real_volume": '$real_volume'
+                    "open": "$open",
+                    "close": "$close",
+                    "high": "$high",
+                    "low": "$low",
+                    "real_volume": "$real_volume"
                 }
             }
         },
@@ -183,7 +183,7 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
         },
         {
             "$group": {
-                "_id": 'null',
+                "_id": "null",
                 "min_volume": {
                     "$min": "$day_volume"
                 },
@@ -191,13 +191,67 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
                     "$avg": "$day_volume"
                 },
                 "ticks": {
-                    "$push": '$$ROOT'
+                    "$push": "$$ROOT"
                 }
             }
         },
         {
             "$match": {
-                '$expr': { "$gte": ["$min_volume", minVolume] }
+                "$expr": { "$gte": ["$min_volume", minVolume] }
+            }
+        }
+    ])
+    return list(datas)
+
+def getTimesMin(ticket, db, first_date: FirstDate, last_date: LastDate):
+    datas = db[ticket].aggregate([
+        {
+            "$match":
+            {
+            "$and": [
+                {
+                "date":
+                    {
+                        "$gte": first_date,
+                        "$lte": last_date
+                    }
+                }
+            ],
+            }
+        },
+        {
+            "$project": {
+                "date": {
+                    "$dateToString": {
+                    "date": "$date",
+                    "format": "%Y-%m-%d"
+                    }
+                },
+                "tick": {
+                    "date": "$date",
+                    "open": "$open",
+                    "close": "$close",
+                    "high": "$high",
+                    "low": "$low",
+                    "tick_volume": "$tick_volume",
+                    "real_volume": "$real_volume"
+                }
+            }
+        },
+        {
+            "$sort": {
+                "tick.low": 1
+            }
+        },
+        {
+            "$group": {
+                "_id": "$date",
+                "time": {"$first": "$tick.date"}
+            }
+        },
+        {
+            "$sort": {
+                "_id": 1
             }
         }
     ])

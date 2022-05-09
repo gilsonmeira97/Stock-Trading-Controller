@@ -1,7 +1,7 @@
 COTAHIST_*.txt
 __pycache__
 venv
-teste.py
+teste*.py
 data_extracted.csv
 .env
 examples
