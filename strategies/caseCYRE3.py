@@ -24,7 +24,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         if len(data_result) <= 0: continue
         data_result = data_result[0]
         datas = data_result['ticks']
-        qty_datas = 0
+        qty_datas = len(datas)
         last_object = None
         ocurrences = 0
         total_gain = 0
@@ -35,7 +35,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         maximum_loss = 0
         maximum_gain = 0
         for data in datas:
-            qty_datas += 1
             open = data['open']
             close = data['close']
             high = data['high']

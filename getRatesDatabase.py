@@ -256,3 +256,88 @@ def getTimesMin(ticket, db, first_date: FirstDate, last_date: LastDate):
         }
     ])
     return list(datas)
+
+def getDaysOfWeek(ticket, db, first_date: FirstDate, last_date: LastDate, daysOfWeek, minVolume = 0, order = 1):
+    datas = db[ticket].aggregate([
+        {
+        "$match": {
+            "date": {
+                "$gte": first_date,
+                "$lte": last_date
+            },
+            "$expr": { "$in": [{ "$isoDayOfWeek": "$date" }, daysOfWeek] }
+            }
+        },
+        {
+            "$sort": {
+                "date": 1
+            }
+        },
+        {
+            "$project": {
+                "date": {
+                "$dateToString": {
+                    "date": '$date',
+                    "format": '%Y-%m-%d'
+                }
+                },
+                "tick": {
+                "date": "$date",
+                "open": '$open',
+                "close": '$close',
+                "high": '$high',
+                "low": '$low',
+                "real_volume": '$real_volume'
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$date",
+                "date": {
+                    "$first": "$tick.date"
+                },
+                "open":{
+                    "$first": "$tick.open"
+                },
+                "close": {
+                    "$last": "$tick.close"
+                },
+                "high": {
+                    "$max": "$tick.high"
+                },
+                "low": {
+                    "$min": "$tick.low"
+                },
+                "day_volume": {
+                    "$sum": "$tick.real_volume"
+                }
+            }
+        },
+        {
+            "$sort": {
+                "_id": order
+            }
+        },
+        {
+            "$group": {
+                "_id": "null",
+                "min_volume": {
+                    "$min": "$day_volume"
+                },
+                "avg_volume": {
+                    "$avg": "$day_volume"
+                },
+                "ticks": {
+                    "$push": '$$ROOT'
+                }
+            }
+        },
+        {
+            "$match": {
+                "$expr": { "$gte": ["$min_volume", minVolume] }
+            }
+        }
+    ])
+    return list(datas)
+
