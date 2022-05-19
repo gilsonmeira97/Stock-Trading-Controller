@@ -148,6 +148,7 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
                     }
                 },
                 "tick": {
+                    "date": "$date",
                     "open": "$open",
                     "close": "$close",
                     "high": "$high",
@@ -159,6 +160,9 @@ def getDayRate(ticket, db, first_date: FirstDate, last_date: LastDate, minVolume
         {
             "$group": {
                 "_id": "$date",
+                "date":{
+                    "$first": "$tick.date"
+                },
                 "open":{
                     "$first": "$tick.open"
                 },
