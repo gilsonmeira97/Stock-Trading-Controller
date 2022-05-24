@@ -86,12 +86,19 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
     date_DB = getUTC(last_day_DB['date'])
     
     dividend_test = mt5.copy_rates_range(symbol_mt5_name, mt5.TIMEFRAME_M5, date_DB, date_DB)
-    
+
+    if date_DB.hour >= 17 and symbol_db_name != "WIN":
+        writeLog(file, f'DB: Ajuste de horário em {symbol_mt5_name}')
+        drop_res = dropCol(symbol_db_name)
+        if 'ns' in drop_res: 
+            newStock(symbol_db_name, symbol_mt5_name)
+        return
+
     if dividend_test is None or len(dividend_test) == 0: 
         writeLog(file, f'MT5: Falha ao obter dados de {symbol_mt5_name} - (dividendTest)')
         return
 
-    if(date_DB == getUTC(datetime.utcfromtimestamp(dividend_test[0]['time'])) and dividend_test[0]['close'] != last_day_DB['close']):
+    if (date_DB == getUTC(datetime.utcfromtimestamp(dividend_test[0]['time'])) and dividend_test[0]['close'] != last_day_DB['close']):
         writeLog(file, f'DB: Ajuste de dividendos em {symbol_mt5_name}')
         drop_res = dropCol(symbol_db_name)
         if 'ns' in drop_res: 
