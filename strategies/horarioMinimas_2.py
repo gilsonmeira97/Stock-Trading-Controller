@@ -2,7 +2,9 @@ import __sub__
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
+from dbOperations import getConnection
 
+client, db = getConnection()
 nameFile = f"Extracted (Date Min) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_date_start = FirstDate(2021,4,18)
@@ -27,7 +29,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer.writeheader()
     
     for i, symbol in enumerate(symbols):
-        datas = getTimesMin(symbol, f_date_start, f_date_end)
+        datas = getTimesMin(db, symbol, f_date_start, f_date_end)
         qty_datas = len(datas)
 
         if qty_datas <= 0: continue
@@ -49,4 +51,5 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         writer.writerow(count_dates)
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 
+client.close()
 print("Ready!")

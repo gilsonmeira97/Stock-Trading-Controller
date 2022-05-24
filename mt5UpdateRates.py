@@ -6,6 +6,7 @@ from dbOperations import getConnection, getLastDay, insertDatas, dropCol, getUTC
 from Share import Share
 from logManager import writeLog
 
+client, db = getConnection()
 reference = "PETR3"
 symbols = getSymbols()
 y_date = datetime.today() - timedelta(days=3)
@@ -40,12 +41,12 @@ def newStock(symbol_db_name, symbol_mt5_name):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol_db_name)
+            insertDatas(db, group_rates, symbol_db_name)
             group_rates = []
             count = 0
 
     if len(group_rates) != 0:
-        insertDatas(group_rates, symbol_db_name)
+        insertDatas(db, group_rates, symbol_db_name)
 
 def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
     count = 0
@@ -70,12 +71,12 @@ def updateStock(symbol_db_name, symbol_mt5_name, date_DB):
         count += 1
 
         if count == 10000:
-            insertDatas(group_rates, symbol_db_name)
+            insertDatas(db, group_rates, symbol_db_name)
             group_rates = []
             count = 0
 
     if len(group_rates) != 0:
-        insertDatas(group_rates, symbol_db_name)
+        insertDatas(db, group_rates, symbol_db_name)
 
 
 def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
@@ -89,7 +90,7 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
 
     if date_DB.hour >= 17 and symbol_db_name != "WIN":
         writeLog(file, f'DB: Ajuste de horário em {symbol_mt5_name}')
-        drop_res = dropCol(symbol_db_name)
+        drop_res = dropCol(db, symbol_db_name)
         if 'ns' in drop_res: 
             newStock(symbol_db_name, symbol_mt5_name)
         return
@@ -100,7 +101,7 @@ def updateDB(symbol_db_name, last_day_DB, symbol_mt5_name):
 
     if (date_DB == getUTC(datetime.utcfromtimestamp(dividend_test[0]['time'])) and dividend_test[0]['close'] != last_day_DB['close']):
         writeLog(file, f'DB: Ajuste de dividendos em {symbol_mt5_name}')
-        drop_res = dropCol(symbol_db_name)
+        drop_res = dropCol(db, symbol_db_name)
         if 'ns' in drop_res: 
             newStock(symbol_db_name, symbol_mt5_name)
         return
@@ -113,7 +114,8 @@ print('Updating...')
 writeLog(file, f'DB: Atualização da base de dados - (Update)')
 
 for symbol_db_name, symbol_mt5_name  in symbols.items():
-    updateDB( symbol_db_name, getLastDay(symbol_db_name), symbol_mt5_name)
+    updateDB(symbol_db_name, getLastDay(db, symbol_db_name), symbol_mt5_name)
 
 file.close()
+client.close()
 print("Updated!")

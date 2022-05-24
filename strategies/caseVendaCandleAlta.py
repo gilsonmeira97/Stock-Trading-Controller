@@ -2,7 +2,9 @@ import __sub__
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
+from dbOperations import getConnection
 
+client, db = getConnection()
 nameFile = f"Extracted Venda_Candle_Alta - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_StopGain = 0.01
@@ -16,10 +18,10 @@ f_date_end = LastDate(2022,6,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Date Loss', 'Date Gain', 'Volume Min', 'Volume Med'])
+    writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Date Loss', 'Date Gain', 'Volume Min', 'Volume Med', 'Var. Max'])
     
     for i, symbol in enumerate(symbols):
-        data_result = getDayRate(symbol, f_date_start, f_date_end, f_MinVolume)
+        data_result = getDayRate(db, symbol, f_date_start, f_date_end, f_MinVolume)
         if len(data_result) <= 0: continue
         data_result = data_result[0]
         datas = data_result['ticks']
@@ -33,6 +35,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         acertos = 0
         percentual_acertos = 0
         maximum_loss = 0
+        maximum_ocilation = 0
         date_loss = None
         maximum_gain = 0
         date_gain = None
@@ -41,15 +44,15 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             close = data['close']
             high = data['high']
             dayOfWeek = data['date'].isoweekday()
-            isIdeal = False
 
             if (day_reference['close'] > day_reference['open']) and ((open / day_reference['close'] - 1) >= f_varReference) and (dayOfWeek != 5):
                 ocurrences += 1
 
-                if ((high / open - 1) * -1) > f_StopLoss:
-                    variation = (close / open - 1) * -1
-                else:
-                    variation = f_StopLoss
+                if close < open:
+                    max_var = (high / open - 1) * -1
+                    maximum_ocilation = max_var if max_var < maximum_ocilation else maximum_ocilation
+                
+                variation = (close / open - 1) * -1
                 
                 total_gain += variation
 
@@ -73,7 +76,8 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             percentual_acertos = acertos / ocurrences
         
         if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.003) or (percentual_acertos <= 0.25 and avg_gain < -0.003)):
-            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, date_loss, date_gain, data_result['min_volume'], data_result['avg_volume']])
+            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, date_loss, date_gain, data_result['min_volume'], data_result['avg_volume'], maximum_ocilation])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 
+client.close()
 print("Ready!")

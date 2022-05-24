@@ -2,7 +2,9 @@ import __sub__
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
+from dbOperations import getConnection
 
+client, db = getConnection()
 nameFile = f"Extracted (COWF) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_StopLoss = -0.0165
@@ -17,7 +19,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
     
     for i, symbol in enumerate(symbols):
-        data_result = getDayRate(symbol, f_date_start, f_date_end, f_MinVolume)
+        data_result = getDayRate(db, symbol, f_date_start, f_date_end, f_MinVolume)
         if len(data_result) <= 0: continue
         data_result = data_result[0]
         datas = data_result['ticks']
@@ -65,4 +67,5 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 
+client.close()
 print("Ready!")
