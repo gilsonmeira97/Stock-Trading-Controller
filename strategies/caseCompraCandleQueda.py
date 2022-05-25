@@ -64,7 +64,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 last_object = None
 
-            if (close / open - 1) <= f_varReference and data['date'].isoweekday() != 5 and isIdeal:
+            if (close / open - 1) <= f_varReference and dayOfWeek != 5 and isIdeal:
                 last_object = data
 
             day_reference = data

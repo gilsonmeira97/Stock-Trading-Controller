@@ -1,19 +1,17 @@
 import __sub__
-from dbOperations import getConnection
 from getRatesDatabase import *
 from inputSymbols import getSymbols
 import csv
+from dbOperations import getConnection
 
 client, db = getConnection()
-nameFile = f"Extracted Compra_Candle_Alta - {str(datetime.now().timestamp()).replace('.','')}"
+nameFile = f"Extracted Compra_Candle_Queda - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopGain = 0.01
 f_MinVolume = 100000
 f_MinOcurrences = 15
-f_varReference = 0.002
-f_varReference_1 = -0.01
+f_varReference = -0.002
 f_date_start = FirstDate(2021,1,1)
-f_date_end = LastDate(2022,6,30)
+f_date_end = LastDate(2021,6,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -40,20 +38,15 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         for data in datas:
             open = data['open']
             close = data['close']
-            high = data['high']
             dayOfWeek = data['date'].isoweekday()
-            isIdeal = True
+            isIdeal = False
 
-            if ((day_reference['close'] > day_reference['open']) and (close < day_reference['close']) and (open > day_reference['open'])) or ((day_reference['close'] < day_reference['open']) and (close < day_reference['open']) and (open > day_reference['close'])):
-                isIdeal = False
+            if (close < day_reference['close']):
+                isIdeal = True
 
             if (last_object != None):
                 ocurrences += 1
-
-                if ( high / last_object['close'] - 1) >= f_StopGain:
-                    variation = f_StopGain
-                else:
-                    variation = (close / last_object['close'] - 1)
+                variation = (open / last_object['close'] - 1)
                 
                 total_gain += variation
 
@@ -70,7 +63,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 last_object = None
 
-            if (close / open - 1) >= f_varReference and dayOfWeek != 5 and isIdeal:
+            if (close / open - 1) <= f_varReference and dayOfWeek != 5 and isIdeal:
                 last_object = data
 
             day_reference = data
