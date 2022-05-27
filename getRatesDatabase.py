@@ -122,15 +122,16 @@ def getTwoRates(db, ticket, first_date: FirstDate, last_date: LastDate, start_in
     ])
     return datas
 
-# Retorna as informações diarias (OHCL)
-def getDayRate(db, ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
+# Retorna as informações diarias (OHCL), podendo filtrar por dia da semana e/ou volume
+def getDayRate(db, ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, daysOfWeek = [1, 2, 3, 4, 5], order = 1):
     datas = db[ticket].aggregate([
         {
             "$match": {
                 "date": {
                     "$gte": first_date,
                     "$lte": last_date
-                }
+                },
+            "$expr": { "$in": [{ "$isoDayOfWeek": "$date" }, daysOfWeek] }
             }
         },
         {
@@ -207,6 +208,7 @@ def getDayRate(db, ticket, first_date: FirstDate, last_date: LastDate, minVolume
     ])
     return list(datas)
 
+# Retorna o horário diário das mínimas
 def getTimesMin(db, ticket, first_date: FirstDate, last_date: LastDate):
     datas = db[ticket].aggregate([
         {
@@ -261,44 +263,45 @@ def getTimesMin(db, ticket, first_date: FirstDate, last_date: LastDate):
     ])
     return list(datas)
 
-def getDaysOfWeek(db, ticket, first_date: FirstDate, last_date: LastDate, daysOfWeek, minVolume = 0, order = 1):
+# Retorna as informações de 5 em 5 min, filtradas por volume diário
+def getDayMinutes(db, ticket, first_date: FirstDate, last_date: LastDate, minVolume = 0, order = 1):
     datas = db[ticket].aggregate([
         {
-        "$match": {
-            "date": {
-                "$gte": first_date,
-                "$lte": last_date
-            },
-            "$expr": { "$in": [{ "$isoDayOfWeek": "$date" }, daysOfWeek] }
+            "$match": {
+                "date": {
+                    "$gte": first_date,
+                    "$lte": last_date
+                }
             }
         },
         {
             "$sort": {
-                "date": 1
-            }
+            "date": 1
+        }
         },
         {
             "$project": {
+                
                 "date": {
-                "$dateToString": {
-                    "date": '$date',
-                    "format": '%Y-%m-%d'
-                }
+                    "$dateToString": {
+                    "date": "$date",
+                    "format": "%Y-%m-%d"
+                    }
                 },
                 "tick": {
-                "date": "$date",
-                "open": '$open',
-                "close": '$close',
-                "high": '$high',
-                "low": '$low',
-                "real_volume": '$real_volume'
+                    "date": "$date",
+                    "open": "$open",
+                    "close": "$close",
+                    "high": "$high",
+                    "low": "$low",
+                    "real_volume": "$real_volume"
                 }
             }
         },
         {
             "$group": {
                 "_id": "$date",
-                "date": {
+                "date":{
                     "$first": "$tick.date"
                 },
                 "open":{
@@ -315,12 +318,15 @@ def getDaysOfWeek(db, ticket, first_date: FirstDate, last_date: LastDate, daysOf
                 },
                 "day_volume": {
                     "$sum": "$tick.real_volume"
+                },
+                "ticks": {
+                    "$push": "$tick"
                 }
             }
         },
         {
             "$sort": {
-                "_id": order
+            "_id": order
             }
         },
         {
@@ -333,7 +339,7 @@ def getDaysOfWeek(db, ticket, first_date: FirstDate, last_date: LastDate, daysOf
                     "$avg": "$day_volume"
                 },
                 "ticks": {
-                    "$push": '$$ROOT'
+                    "$push": "$$ROOT"
                 }
             }
         },
@@ -344,4 +350,3 @@ def getDaysOfWeek(db, ticket, first_date: FirstDate, last_date: LastDate, daysOf
         }
     ])
     return list(datas)
-

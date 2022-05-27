@@ -20,7 +20,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
     
     for i, symbol in enumerate(symbols):
-        data_result = getDaysOfWeek(db, symbol, f_date_start, f_date_end, [1, 2, 3, 4, 5], f_MinVolume)
+        data_result = getDayRate(db, symbol, f_date_start, f_date_end, f_MinVolume, [1, 2, 3, 4, 5])
         if len(data_result) <= 0: continue
         data_result = data_result[0]
         datas = data_result['ticks']
