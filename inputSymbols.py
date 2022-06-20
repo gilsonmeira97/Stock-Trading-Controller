@@ -1,7 +1,5 @@
 import re
 
-regex = re.compile(r'([A-Z]{4})(\d{1,2}\b)')
-
 def getSymbols():
     #Lista com nome das ações
     symbols_shares = {}
@@ -9,12 +7,12 @@ def getSymbols():
         lines = document.readlines()
         for line in lines:
             id = line[0:2]
-            if id == '01':
+            cod = line[10:12]
+
+            # Cod 02 = Lote padrão, Cod 08 = Recuperação Judicial (Consultar Layout B3)
+            if id == '01' and cod in ['02', '08']:
                 ticket = (line[12:24]).rstrip()
-                
-                #Adiciona somente as ações que batem com a regex
-                if re.match(regex,ticket) != None and ticket not in symbols_shares:
-                    symbols_shares[ticket] = ticket
+                symbols_shares[ticket] = ticket
     pass
     symbols_shares['WIN'] = 'WIN$'
     return symbols_shares
