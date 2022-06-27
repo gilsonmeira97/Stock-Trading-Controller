@@ -44,9 +44,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             high = data['high']
             dayOfWeek = data['date'].isoweekday()
 
-            if ((close / open) - 1) <= f_varReference and dayOfWeek != 5:
-                last_object = data
-            elif (last_object != None):
+            if (last_object != None):
                 ocurrences += 1
 
                 if ((high / last_object['close']) - 1) >= f_StopGain:
@@ -68,6 +66,9 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                         date_gain = data['date']
 
                 last_object = None
+
+            if ((close / open) - 1) <= f_varReference and dayOfWeek != 5:
+                last_object = data
 
         if (ocurrences > 0):
             avg_gain = total_gain / ocurrences
