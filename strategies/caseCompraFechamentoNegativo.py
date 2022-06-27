@@ -50,7 +50,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                 if ((high / last_object['close']) - 1) >= f_StopGain:
                     variation = f_StopGain
                 else:
-                    variation = (open / last_object['close'] - 1)
+                    variation = (close / last_object['close'] - 1)
 
                 total_gain += variation
 
