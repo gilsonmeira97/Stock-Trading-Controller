@@ -46,8 +46,11 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
             if (last_object != None):
                 ocurrences += 1
+                openClose = ((open / last_object['close']) - 1)
 
-                if ((high / last_object['close']) - 1) >= f_StopGain:
+                if openClose >= f_StopGain:
+                    variation = openClose
+                elif ((high / last_object['close']) - 1) >= f_StopGain:
                     variation = f_StopGain
                 else:
                     variation = (close / last_object['close'] - 1)
