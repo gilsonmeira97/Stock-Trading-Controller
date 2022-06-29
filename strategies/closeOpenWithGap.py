@@ -11,8 +11,8 @@ f_StopLoss = -0.0165
 f_MinVolume = 100000
 f_MinOcurrences = 10
 f_varReference = -0.0025
-f_date_start = FirstDate(2022,4,14)
-f_date_end = LastDate(2022,4,18)
+f_date_start = FirstDate(2021,6,15)
+f_date_end = LastDate(2022,6,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -33,16 +33,17 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         percentual_acertos = 0
         maximum_loss = 0
         maximum_gain = 0
+        date_loss = None
+        date_gain = None
+
         for data in datas:
             open = data['open']
             close = data['close']
             high = data['high']
-
-            if (last_object == None) and (close < open):
-                last_object = data
-            elif (last_object != None) and ((open / last_object['close'] - 1) <= f_varReference):
+            
+            if (last_object != None) and ((open / last_object['close'] - 1) <= f_varReference):
                 ocurrences += 1
-                if ( ((high / open - 1) * -1) > f_StopLoss):
+                if (((high / open - 1) * -1) > f_StopLoss):
                     variation = (close / open - 1) * -1
                 else:
                     variation = f_StopLoss
@@ -50,14 +51,21 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 if (variation <= 0):
                     erros += 1
-                    maximum_loss = variation if variation < maximum_loss else maximum_loss
+                    if variation < maximum_loss:
+                        maximum_loss = variation 
+                        date_loss = data['date']
                 else:
                     acertos += 1
-                    maximum_gain = variation if variation > maximum_gain else maximum_gain
+                    if variation > maximum_gain:
+                        maximum_gain = variation
+                        date_gain = data['date']
 
                 last_object = None
             elif (last_object != None):
                 last_object = None
+            
+            if (last_object == None) and (close < open):
+                last_object = data
 
         if (ocurrences > 0):
             avg_gain = total_gain / ocurrences

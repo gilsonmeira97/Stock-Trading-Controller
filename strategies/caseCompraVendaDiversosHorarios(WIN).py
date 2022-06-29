@@ -90,8 +90,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                             maximum_gain = variation
                             date_gain = dt_tick_gain
 
-                #day_reference = data
-
             if (ocurrences > 0):
                 avg_gain = total_gain / ocurrences
                 percentual_acertos = acertos / ocurrences

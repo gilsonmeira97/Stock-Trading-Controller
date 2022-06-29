@@ -26,7 +26,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         data_result = data_result[0]
         datas = data_result['ticks']
         qty_datas = len(datas)
-        last_object = None
         day_reference = {'close': 0, 'open': 0, 'day_volume': 0}
         ocurrences = 0
         total_gain = 0
@@ -66,8 +65,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                     if variation > maximum_gain:
                         maximum_gain = variation
                         date_gain = data['date']
-
-                last_object = None
 
             day_reference = data
 

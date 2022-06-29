@@ -7,8 +7,8 @@ from dbOperations import getConnection
 client, db = getConnection()
 nameFile = f"Extracted (Date Min) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_date_start = FirstDate(2021,4,18)
-f_date_end = LastDate(2022,4,20)
+f_date_start = FirstDate(2021,6,15)
+f_date_end = LastDate(2022,6,30)
 
 def generateHours():
     time_h = 8
@@ -22,7 +22,6 @@ def generateHours():
         dates.append(f"{time_h}:{time_m}")
     
     return dates
-
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames=generateHours())
@@ -46,7 +45,6 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                 count_dates[str_date] += 1 
             else: 
                 count_dates[str_date] = 1
-            
 
         writer.writerow(count_dates)
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
