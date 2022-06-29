@@ -7,7 +7,7 @@ from dbOperations import getConnection
 client, db = getConnection()
 nameFile = f"Extracted Retorno a Abertura - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopGain = 0.005
+f_StopGain = 0.006
 f_StopLoss = -0.013
 f_MinVolume = 100000
 f_MinOcurrences = 15
@@ -47,7 +47,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             dayOfWeek = data['date'].isoweekday()
             target_price = day_reference['close']
 
-            if (low <= target_price) and open / target_price - 1 >= f_varReference:
+            if (low <= target_price) and open / target_price - 1 >= f_varReference and open / target_price - 1 <= 0.01:
                 ocurrences += 1
                 variation = None
                 is_entry = False
