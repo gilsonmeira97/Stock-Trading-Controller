@@ -16,7 +16,7 @@ f_date_end = LastDate(2022,6,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Volume Min', 'Volume Med'])
+    writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Data Loss', 'Data Gain', 'Volume Min', 'Volume Med'])
     
     for i, symbol in enumerate(symbols):
         data_result = getDayRate(db, symbol, f_date_start, f_date_end, f_MinVolume)
@@ -72,7 +72,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             percentual_acertos = acertos / ocurrences
         
         if (ocurrences >= f_MinOcurrences) and ((percentual_acertos > 0.65 and avg_gain > 0.003) or (percentual_acertos <= 0.25 and avg_gain < -0.003)):
-            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, data_result['min_volume'], data_result['avg_volume']])
+            writer.writerow([symbol, qty_datas, ocurrences, acertos, erros, percentual_acertos, total_gain, avg_gain, maximum_loss, maximum_gain, date_loss, date_gain, data_result['min_volume'], data_result['avg_volume']])
         print('Concluído: {:.2f}%'.format((i+1) / len(symbols) * 100))
 
 client.close()
