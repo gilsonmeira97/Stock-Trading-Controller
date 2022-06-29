@@ -11,8 +11,8 @@ f_StopGain = 0.006
 f_StopLoss = -0.013
 f_MinVolume = 100000
 f_MinOcurrences = 15
-f_varReference = -0.02
-f_date_start = FirstDate(2021,1,1)
+f_varReference = -0.015
+f_date_start = FirstDate(2021,12,15)
 f_date_end = LastDate(2022,6,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
@@ -54,12 +54,13 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 for tick in ticks:
                     tick_low = tick['low']
+                    tick_high = tick['high']
                     tick_close = tick['close']
 
                     if is_entry is False and (tick_low <= target_price):
-                        entry = True
+                        is_entry = True
                         continue
-                    elif is_entry and tick_close / target_price - 1 >= f_StopGain :
+                    elif is_entry and tick_high / target_price - 1 >= f_StopGain :
                         variation = f_StopGain
                         break
 
