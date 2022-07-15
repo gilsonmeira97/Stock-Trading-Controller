@@ -5,7 +5,7 @@ import csv
 from dbOperations import getConnection
 
 client, db = getConnection()
-nameFile = f"Extracted Fechamento Negativo - {str(datetime.now().timestamp()).replace('.','')}"
+nameFile = f"Extracted Fechamento Negativo(Stop Loss) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_StopGain = 0.008
 f_StopLoss = -0.016
@@ -56,6 +56,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                     var_test = f_StopGain
                 else:
                     var_test = (close / last_object['close'] - 1)
+                    
                 if var_test > 0:
                     for tick in ticks:
                         variation_tick = (tick['low'] / last_object['close'] - 1)
@@ -87,10 +88,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                 openClose = ((open / last_object['close']) - 1)
 
                 for tick in ticks:
-                    if openClose >= f_StopGain:
-                        variation = openClose
-                        break
-                    elif openClose < max_ocilation:
+                    if openClose >= f_StopGain or openClose <= max_ocilation:
                         variation = openClose
                         break
                     elif ((tick['low'] / last_object['close']) - 1) <= max_ocilation:
