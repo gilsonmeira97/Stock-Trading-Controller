@@ -5,7 +5,7 @@ import csv
 from dbOperations import getConnection
 
 client, db = getConnection()
-nameFile = f"Extracted Teste WIN - {str(datetime.now().timestamp()).replace('.','')}"
+nameFile = f"Extracted Diversos horários(Todos) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
 f_StopGain = 0.012
 f_StopLoss = 0
