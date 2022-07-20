@@ -13,7 +13,7 @@ f_MinVolume = 100000
 f_MinOcurrences = 15
 f_varReference = -0.025
 f_date_start = FirstDate(2021,12,15)
-f_date_end = LastDate(2022,6,30)
+f_date_end = LastDate(2022,12,30)
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
