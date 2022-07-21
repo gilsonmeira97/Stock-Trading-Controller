@@ -7,7 +7,7 @@ from dbOperations import getConnection
 client, db = getConnection()
 nameFile = f"Extracted Diversos horários(Todos - StopLoss) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopGain = 0.009
+f_StopGain = 0.007
 f_StopLoss = 0
 f_MinVolume = 100000
 f_MinOcurrences = 15
@@ -89,7 +89,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
             ### Inicio 2ª verificação
 
-            max_ocilation -= 0.0005    
+            max_ocilation -= 0.001    
             
             for data in datas:
                 close = data['close']

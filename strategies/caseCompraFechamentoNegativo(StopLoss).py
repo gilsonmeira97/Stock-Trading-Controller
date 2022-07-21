@@ -78,7 +78,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
         ### Inicio 2ª verificação
 
         last_object = None
-        max_ocilation -= 0.0005    
+        max_ocilation -= 0.001    
 
         for data in datas:
             open = data['open']
