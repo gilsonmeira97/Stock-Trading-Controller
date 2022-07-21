@@ -7,13 +7,18 @@ from dbOperations import getConnection
 client, db = getConnection()
 nameFile = f"Extracted Diversos horários(Todos) - {str(datetime.now().timestamp()).replace('.','')}"
 symbols = getSymbols()
-f_StopGain = 0.012
+f_StopGain = 0.009
 f_StopLoss = 0
 f_MinVolume = 100000
 f_MinOcurrences = 15
 f_varReference = 0.005
 f_date_start = FirstDate(2021,12,15)
 f_date_end = LastDate(2022,12,30)
+
+def verifyDate(date, reference = [4]):
+    if date in reference:
+        return True
+    return False
 
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -54,7 +59,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                 dayOfWeek = data['date'].isoweekday()
                 tick_reference = None
 
-                if (dayOfWeek != 0):
+                if verifyDate(dayOfWeek):
                     variation = None
                     
                     for tick in ticks:
