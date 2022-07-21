@@ -15,6 +15,11 @@ f_varReference = -0.025
 f_date_start = FirstDate(2021,12,15)
 f_date_end = LastDate(2022,12,30)
 
+def verifyDate(date, reference = [1, 2, 3, 4]):
+    if date in reference:
+        return True
+    return False
+
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Date Loss', 'Date Gain', 'Volume Min', 'Volume Med', 'Stop_loss'])
@@ -67,13 +72,13 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
                         
                 last_object = None
 
-            if dayOfWeek != 5:
+            if verifyDate(dayOfWeek):
                 last_object = data
 
         ### Inicio 2ª verificação
 
         last_object = None
-        max_ocilation += 0.0005    
+        max_ocilation -= 0.0005    
 
         for data in datas:
             open = data['open']
@@ -115,7 +120,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 last_object = None
 
-            if dayOfWeek != 5:
+            if verifyDate(dayOfWeek):
                 last_object = data
 
         if (ocurrences > 0):
