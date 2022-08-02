@@ -15,6 +15,11 @@ f_varReference = 0.005
 f_date_start = FirstDate(2021,6,20)
 f_date_end = LastDate(2022,6,30)
 
+def verifyDate(date, reference = [1, 2, 3, 4, 5]):
+    if date in reference:
+        return True
+    return False
+
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Data Loss', 'Data Gain', 'Volume Min', 'Volume Med'])
@@ -42,6 +47,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             close = data['close']
             high = data['high']
             low = data['low']
+            dayOfWeek = data['date'].isoweekday()
             
             if (last_object != None):
                 ocurrences += 1
@@ -66,9 +72,8 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
 
                 last_object = None
 
-            if ((close / low - 1) <= f_varReference):
+            if ((close / low - 1) <= f_varReference) and verifyDate(dayOfWeek):
                 last_object = data
-
 
         if (ocurrences > 0):
             avg_gain = total_gain / ocurrences

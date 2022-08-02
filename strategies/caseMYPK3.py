@@ -15,6 +15,11 @@ f_varReference = -0.015
 f_date_start = FirstDate(2021,12,15)
 f_date_end = LastDate(2022,12,30)
 
+def verifyDate(date, reference = [1, 2, 3, 4]):
+    if date in reference:
+        return True
+    return False
+
 with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Ativo', 'Qtd Registros', 'Ocorrencias', 'Acertos', 'Erros', '% Acerto', 'G/L Total', "G/L Med.", 'Max. Loss', 'Max. Gain', 'Date Loss', 'Date Gain', 'Volume Min', 'Volume Med'])
@@ -47,7 +52,7 @@ with open(f'extracteds/{nameFile}.csv', mode='w', newline='') as file:
             dayOfWeek = data['date'].isoweekday()
             target_price = day_reference['close'] * (1 + f_varReference)
 
-            if (dayOfWeek != 5) and (low <= target_price):
+            if verifyDate(dayOfWeek) and (low <= target_price):
                 ocurrences += 1
                 variation = None
                 is_entry = False
