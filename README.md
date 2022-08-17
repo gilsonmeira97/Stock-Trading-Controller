@@ -1,6 +1,7 @@
 # Stock-Trading-Controller
 Projeto para obter as cotações diárias da B3 através do software de negociação MetaTrader 5.  
 As cotação são obtidas através da lib **"Metatrader5"** e são gravadas em uma base de dados mongoDB.
+O objetivo principal dessa aplicação é poder armazenar as cotações localmente possibilitando fazer testes estatísticos para buscar padrões.
 
 ## Como utilizar o projeto:
 Primeiramente faça a instalação dos seguintes programas: [**mongoDB**](https://www.mongodb.com/try/download/community), [**Metatrader 5**](https://www.metatrader5.com/es/download), [**Git**](https://git-scm.com/downloads), [**Python 3**](https://www.python.org/downloads/).
@@ -75,4 +76,4 @@ Stocks(Database) {
 - csvExtract tem como função exportar as cotações de um determinado ativo.
 - A pasta tempTest contem arquivos com funcionalidades em teste, a mesma não é referenciada por nenhum outro arquivo podendo até mesmo ser excluída.
 - o arquivo ***\_\_sub\_\_.py*** é utilizado apenas para referenciar o diretório raiz nos subdiretórios, o que permite utilizar módulos do diretório raiz em arquivos que estão em subdiretórios.
-- A pasta ***strategies*** é destinada a armazenar as estratégias que serão testadas.
+- A pasta ***strategies*** é destinada a armazenar as estratégias que serão testadas, nela há algumas estratégias já testadas, utilize um dos arquivos para melhor orientar-se na criação de suas estratégias.
